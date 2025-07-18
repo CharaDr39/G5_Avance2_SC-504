@@ -1,15 +1,13 @@
+// src/main/java/com/frenchies/g5_avance2_sc504/repository/UserRepository.java
 package com.frenchies.g5_avance2_sc504.repository;
 
 import java.sql.Types;
 import java.util.List;
 import java.util.Map;
-
 import jakarta.annotation.PostConstruct;
-
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
 
@@ -17,18 +15,15 @@ import org.springframework.stereotype.Repository;
 public class UserRepository {
 
     private final JdbcTemplate jdbc;
-    private SimpleJdbcCall insUserCall;
-    private SimpleJdbcCall updUserCall;
-    private SimpleJdbcCall delUserCall;
+    private SimpleJdbcCall insCall, updCall, delCall, listCall;
 
     public UserRepository(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
     }
 
     @PostConstruct
-    void init() {
-        // INS_USUARIO
-        this.insUserCall = new SimpleJdbcCall(jdbc)
+    public void init() {
+        insCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
             .withProcedureName("INS_USUARIO")
             .declareParameters(
@@ -38,8 +33,7 @@ public class UserRepository {
                 new SqlOutParameter("P_OUT_ID", Types.NUMERIC)
             );
 
-        // UPD_USUARIO
-        this.updUserCall = new SimpleJdbcCall(jdbc)
+        updCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
             .withProcedureName("UPD_USUARIO")
             .declareParameters(
@@ -49,47 +43,44 @@ public class UserRepository {
                 new SqlParameter("P_ROL_ID", Types.NUMERIC)
             );
 
-        // DEL_USUARIO
-        this.delUserCall = new SimpleJdbcCall(jdbc)
+        delCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
             .withProcedureName("DEL_USUARIO")
-            .declareParameters(
-                new SqlParameter("P_USUARIO_ID", Types.NUMERIC)
-            );
+            .declareParameters(new SqlParameter("P_USUARIO_ID", Types.NUMERIC));
+
+        listCall = new SimpleJdbcCall(jdbc)
+            .withCatalogName("PKG_FRENCHIES")
+            .withProcedureName("LIST_USUARIOS")
+            .declareParameters(new SqlOutParameter("P_CURSOR", Types.REF_CURSOR))
+            .returningResultSet("P_CURSOR", (rs, rn) -> Map.of(
+                "USUARIO_ID", rs.getLong("USUARIO_ID"),
+                "USUARIO",    rs.getString("USUARIO"),
+                "ROL_ID",     rs.getLong("ROL_ID")
+            ));
     }
 
-    public long insertUser(String usuario, String password, Long rolId) {
-        var out = insUserCall.execute(
-            Map.of(
-              "P_USUARIO", usuario,
-              "P_PASSWORD", password,
-              "P_ROL_ID", rolId
-            )
+    public long insertUser(String usuario, String password, long rolId) {
+        var out = insCall.execute(
+            Map.of("P_USUARIO", usuario, "P_PASSWORD", password, "P_ROL_ID", rolId)
         );
         return ((Number) out.get("P_OUT_ID")).longValue();
     }
 
-    public void updateUser(long id, String usuario, String password, Long rolId) {
-        var params = new MapSqlParameterSource()
-            .addValue("P_USUARIO_ID", id)
-            .addValue("P_USUARIO", usuario)
-            .addValue("P_PASSWORD", password)
-            .addValue("P_ROL_ID", rolId);
-        updUserCall.execute(params);
+    public void updateUser(long id, String usuario, String password, long rolId) {
+        updCall.execute(Map.of(
+            "P_USUARIO_ID", id,
+            "P_USUARIO",    usuario,
+            "P_PASSWORD",   password,
+            "P_ROL_ID",     rolId
+        ));
     }
 
     public void deleteUser(long id) {
-        delUserCall.execute(Map.of("P_USUARIO_ID", id));
+        delCall.execute(Map.of("P_USUARIO_ID", id));
     }
 
+    @SuppressWarnings("unchecked")
     public List<Map<String, Object>> listUsers() {
-        // Listado puro sin lógica: asignamos alias en mayúsculas
-        String sql = 
-            "SELECT usuario_id AS \"USUARIO_ID\", " +
-            "usuario AS \"USUARIO\", " +
-            "rol_id AS \"ROL_ID\" " +
-            "FROM usuario " +
-            "ORDER BY usuario_id";
-        return jdbc.queryForList(sql);
+        return (List<Map<String, Object>>) listCall.execute(Map.of()).get("P_CURSOR");
     }
 }

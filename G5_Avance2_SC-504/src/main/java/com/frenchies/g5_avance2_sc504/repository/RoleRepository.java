@@ -1,15 +1,13 @@
+// src/main/java/com/frenchies/g5_avance2_sc504/repository/RoleRepository.java
 package com.frenchies.g5_avance2_sc504.repository;
 
 import java.sql.Types;
 import java.util.List;
 import java.util.Map;
-
 import jakarta.annotation.PostConstruct;
-
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
 
@@ -17,18 +15,15 @@ import org.springframework.stereotype.Repository;
 public class RoleRepository {
 
     private final JdbcTemplate jdbc;
-    private SimpleJdbcCall insRolCall;
-    private SimpleJdbcCall updRolCall;
-    private SimpleJdbcCall delRolCall;
+    private SimpleJdbcCall insCall, updCall, delCall, listCall;
 
     public RoleRepository(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
     }
 
     @PostConstruct
-    void init() {
-        // Crear rol
-        this.insRolCall = new SimpleJdbcCall(jdbc)
+    public void init() {
+        insCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
             .withProcedureName("INS_ROL")
             .declareParameters(
@@ -37,8 +32,7 @@ public class RoleRepository {
                 new SqlOutParameter("P_OUT_ID", Types.NUMERIC)
             );
 
-        // Actualizar rol
-        this.updRolCall = new SimpleJdbcCall(jdbc)
+        updCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
             .withProcedureName("UPD_ROL")
             .declareParameters(
@@ -47,45 +41,39 @@ public class RoleRepository {
                 new SqlParameter("P_DESCRIPCION", Types.VARCHAR)
             );
 
-        // Eliminar rol
-        this.delRolCall = new SimpleJdbcCall(jdbc)
+        delCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
             .withProcedureName("DEL_ROL")
             .declareParameters(
                 new SqlParameter("P_ROL_ID", Types.NUMERIC)
             );
+
+        listCall = new SimpleJdbcCall(jdbc)
+            .withCatalogName("PKG_FRENCHIES")
+            .withProcedureName("LIST_ROLES")
+            .declareParameters(new SqlOutParameter("P_CURSOR", Types.REF_CURSOR))
+            .returningResultSet("P_CURSOR", (rs, rn) -> Map.of(
+                "ROL_ID", rs.getLong("ROL_ID"),
+                "NOMBRE", rs.getString("NOMBRE"),
+                "DESCRIPCION", rs.getString("DESCRIPCION")
+            ));
     }
 
     public long insertRole(String nombre, String descripcion) {
-        Map<String, Object> out = insRolCall.execute(
-            Map.of("P_NOMBRE", nombre, "P_DESCRIPCION", descripcion)
-        );
+        var out = insCall.execute(Map.of("P_NOMBRE", nombre, "P_DESCRIPCION", descripcion));
         return ((Number) out.get("P_OUT_ID")).longValue();
     }
 
     public void updateRole(long id, String nombre, String descripcion) {
-        MapSqlParameterSource params = new MapSqlParameterSource()
-            .addValue("P_ROL_ID", id)
-            .addValue("P_NOMBRE", nombre)
-            .addValue("P_DESCRIPCION", descripcion);
-        updRolCall.execute(params);
+        updCall.execute(Map.of("P_ROL_ID", id, "P_NOMBRE", nombre, "P_DESCRIPCION", descripcion));
     }
 
     public void deleteRole(long id) {
-        delRolCall.execute(Map.of("P_ROL_ID", id));
+        delCall.execute(Map.of("P_ROL_ID", id));
     }
 
+    @SuppressWarnings("unchecked")
     public List<Map<String, Object>> listRoles() {
-        String sql = ""
-          + "SELECT "
-          + "  rol_id      AS \"ROL_ID\", "
-          + "  nombre      AS \"NOMBRE\", "
-          + "  descripcion AS \"DESCRIPCION\" "
-          + "FROM ROL "
-          + "ORDER BY rol_id";
-        return jdbc.queryForList(sql);
+        return (List<Map<String, Object>>) listCall.execute(Map.of()).get("P_CURSOR");
     }
-
-
 }
-

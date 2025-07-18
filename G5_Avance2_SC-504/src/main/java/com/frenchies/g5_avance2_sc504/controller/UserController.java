@@ -1,42 +1,42 @@
+// src/main/java/com/frenchies/g5_avance2_sc504/controller/UserController.java
 package com.frenchies.g5_avance2_sc504.controller;
 
 import java.util.List;
 import java.util.Map;
-
-import com.frenchies.g5_avance2_sc504.dto.CreateUserRequest;
-import com.frenchies.g5_avance2_sc504.dto.UpdateUserRequest;
-import com.frenchies.g5_avance2_sc504.service.UserService;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.frenchies.g5_avance2_sc504.service.UserService;
 
 @RestController
 @RequestMapping("/usuarios")
 public class UserController {
 
     private final UserService svc;
-
-    public UserController(UserService svc) {
-        this.svc = svc;
-    }
+    public UserController(UserService svc) { this.svc = svc; }
 
     @PostMapping
-    public ResponseEntity<Map<String, Object>> create(@RequestBody CreateUserRequest req) {
-        long id = svc.createUser(req);
+    public ResponseEntity<Map<String,Object>> create(@RequestBody Map<String,Object> b) {
+        var usuario = (String) b.get("usuario");
+        var password = (String) b.get("password");
+        var rolId = ((Number) b.get("rolId")).longValue();
+        long id = svc.createUser(usuario, password, rolId);
         return ResponseEntity.ok(Map.of("usuario_id", id));
     }
 
     @GetMapping
-    public ResponseEntity<List<Map<String, Object>>> list() {
-        return ResponseEntity.ok(svc.listUsers());
+    public ResponseEntity<List<Map<String,Object>>> list() {
+        return ResponseEntity.ok(svc.getAllUsers());
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(
         @PathVariable long id,
-        @RequestBody UpdateUserRequest req
+        @RequestBody Map<String,Object> b
     ) {
-        svc.updateUser(id, req);
+        var usuario = (String) b.get("usuario");
+        var password = (String) b.get("password");
+        var rolId = ((Number) b.get("rolId")).longValue();
+        svc.updateUser(id, usuario, password, rolId);
         return ResponseEntity.noContent().build();
     }
 
