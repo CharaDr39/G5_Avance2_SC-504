@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Frenchies API - Frontend</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { margin:0; padding:0; background-color: #121212; color: #ffffff; font-family: sans-serif; }
+    .sidebar {
+      position: fixed; top: 0; left: 0;
+      width: 250px; height: 100%;
+      background-color: #1e1e1e; padding-top: 1rem; overflow-y: auto;
+    }
+    .content {
+      margin-left: 250px; padding: 2rem;
+    }
+    .accordion-button,
+    .accordion-button.collapsed {
+      background-color: #1e1e1e; color: #ffffff; border: none; box-shadow: none;
+    }
+    .accordion-button::after { filter: invert(1); }
+    .accordion-body { background-color: #1e1e1e; padding: 0; }
+    .nav-link { color: #ffffff; padding: 0.5rem 1rem; font-size: 0.9rem; text-decoration: none; }
+    .nav-link:hover,
+    .nav-link.active {
+      background-color: #333333; color: #ffffff;
+    }
+    .nav-link.disabled { opacity: 0.5; pointer-events: none; }
+    .btn-primary { background-color: #bb86fc; border-color: #bb86fc; color: #121212; }
+    .form-control { background-color: #2a2a2a; color: #ffffff; border: 1px solid #444; }
+    .form-control::placeholder { color: #888888; }
+    .card, .page { background-color: #1e1e1e; border: 1px solid #333; }
+    .btn-secondary { background-color: #333333; border-color: #333333; color: #ffffff; }
+    .alert-success { background-color: #388e3c; color: #e8f5e9; }
+    .alert-danger { background-color: #d32f2f; color: #ffebee; }
+    h1 { margin-bottom: 1rem; font-size: 1.8rem; }
+    .intro { font-size: 0.9rem; margin-bottom: 1.5rem; color: #ccc; }
+    label, h5 { color: #ffffff; }
+  </style>
+</head>
+<body>
+  <nav class="sidebar">
+    <h4 class="text-center mb-4">Funciones</h4>
+    <div class="accordion" id="sidebarAccordion">
+      <!-- Roles -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingRoles">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRoles" aria-expanded="true" aria-controls="collapseRoles">
+            Roles
+          </button>
+        </h2>
+        <div id="collapseRoles" class="accordion-collapse collapse show" aria-labelledby="headingRoles" data-bs-parent="#sidebarAccordion">
+          <div class="accordion-body">
+            <ul class="nav flex-column">
+              <li><a href="#" class="nav-link active" data-page="login">Login</a></li>
+              <li><a href="#" class="nav-link" data-page="create-role">Crear Rol</a></li>
+              <li><a href="#" class="nav-link" data-page="list-roles">Listar Roles</a></li>
+              <li><a href="#" class="nav-link" data-page="update-role">Actualizar Rol</a></li>
+              <li><a href="#" class="nav-link" data-page="delete-role">Eliminar Rol</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- Usuarios -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingUsers">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUsers" aria-expanded="false" aria-controls="collapseUsers">
+            Usuarios
+          </button>
+        </h2>
+        <div id="collapseUsers" class="accordion-collapse collapse" aria-labelledby="headingUsers" data-bs-parent="#sidebarAccordion">
+          <div class="accordion-body">
+            <ul class="nav flex-column">
+              <li><a href="#" class="nav-link" data-page="create-user">Crear Usuario</a></li>
+              <li><a href="#" class="nav-link" data-page="list-users">Listar Usuarios</a></li>
+              <li><a href="#" class="nav-link" data-page="update-user">Actualizar Usuario</a></li>
+              <li><a href="#" class="nav-link" data-page="delete-user">Eliminar Usuario</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- Asistencias -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingAsist">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAsist" aria-expanded="false" aria-controls="collapseAsist">
+            Asistencias
+          </button>
+        </h2>
+        <div id="collapseAsist" class="accordion-collapse collapse" aria-labelledby="headingAsist" data-bs-parent="#sidebarAccordion">
+          <div class="accordion-body">
+            <ul class="nav flex-column">
+              <li><a href="#" class="nav-link" data-page="create-asistencia">Crear Asistencia</a></li>
+              <li><a href="#" class="nav-link" data-page="list-asistencias">Listar Asistencias</a></li>
+              <li><a href="#" class="nav-link" data-page="update-asistencia">Actualizar Asistencia</a></li>
+              <li><a href="#" class="nav-link" data-page="delete-asistencia">Eliminar Asistencia</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- Productos -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingProd">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProd" aria-expanded="false" aria-controls="collapseProd">
+            Productos
+          </button>
+        </h2>
+        <div id="collapseProd" class="accordion-collapse collapse" aria-labelledby="headingProd" data-bs-parent="#sidebarAccordion">
+          <div class="accordion-body">
+            <ul class="nav flex-column">
+              <li><a href="#" class="nav-link" data-page="create-producto">Crear Producto</a></li>
+              <li><a href="#" class="nav-link" data-page="list-productos">Listar Productos</a></li>
+              <li><a href="#" class="nav-link" data-page="update-producto">Actualizar Producto</a></li>
+              <li><a href="#" class="nav-link" data-page="delete-producto">Eliminar Producto</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- Facturas -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingFacturas">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFact" aria-expanded="false" aria-controls="collapseFact">
+            Facturas
+          </button>
+        </h2>
+        <div id="collapseFact" class="accordion-collapse collapse" aria-labelledby="headingFacturas" data-bs-parent="#sidebarAccordion">
+          <div class="accordion-body">
+            <ul class="nav flex-column">
+              <li><a href="#" class="nav-link" data-page="create-factura">Crear Factura</a></li>
+              <li><a href="#" class="nav-link" data-page="list-facturas">Listar Facturas</a></li>
+              <li><a href="#" class="nav-link" data-page="update-factura">Actualizar Factura</a></li>
+              <li><a href="#" class="nav-link" data-page="delete-factura">Eliminar Factura</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- Reportes -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingReportes">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRep" aria-expanded="false" aria-controls="collapseRep">
+            Reportes
+          </button>
+        </h2>
+        <div id="collapseRep" class="accordion-collapse collapse" aria-labelledby="headingReportes" data-bs-parent="#sidebarAccordion">
+          <div class="accordion-body">
+            <ul class="nav flex-column">
+              <li><a href="#" class="nav-link" data-page="ventas-dia">Ventas del Día</a></li>
+              <li><a href="#" class="nav-link" data-page="ventas-user">Ventas por Usuario</a></li>
+              <li><a href="#" class="nav-link" data-page="stock-bajo">Stock Bajo</a></li>
+              <li><a href="#" class="nav-link" data-page="asistencia-hoy">Asistencia Hoy</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="content">
+    <div class="intro">
+      <strong>Bienvenido a Frenchies API Frontend</strong><br>
+      Este proyecto fue un reto personal de backend y frontend con Spring Boot y Oracle. Me tomó varias noches, varias latas de Monster y mucho trabajo para integrar la base de datos, exponer los procedimientos y diseñar esta UI. ¡Gracias por llegar hasta aquí!
+    </div>
+    <h1>Frenchies - Gestión</h1>
+
+    <!-- LOGIN PAGE -->
+    <div class="page" id="login">
+      <div class="card p-4 mb-4">
+        <h5 class="card-title">Iniciar Sesión</h5>
+        <form id="login-form">
+          <div class="mb-3">
+            <label for="login-usuario" class="form-label">Usuario</label>
+            <input type="text" id="login-usuario" class="form-control" placeholder="Ej. CAJERO1" required>
+          </div>
+          <div class="mb-3">
+            <label for="login-password" class="form-label">Contraseña</label>
+            <input type="password" id="login-password" class="form-control" placeholder="Tu contraseña" required>
+          </div>
+          <button class="btn btn-primary">Entrar</button>
+        </form>
+        <div id="login-result"></div>
+      </div>
+    </div>
+
+    <!-- CREATE ROLE PAGE -->
+    <div class="page d-none" id="create-role">
+      <div class="card p-4 mb-4">
+        <h5 class="card-title mb-3">Crear Nuevo Rol</h5>
+        <form id="role-form">
+          <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="nombre" placeholder="Ej. Administrador" required>
+          </div>
+          <div class="mb-3">
+            <label for="descripcion" class="form-label">Descripción</label>
+            <input type="text" class="form-control" id="descripcion" placeholder="Ej. Control total del sistema">
+          </div>
+          <button type="submit" class="btn btn-primary">Crear Rol</button>
+        </form>
+        <div id="result"></div>
+      </div>
+    </div>
+
+    <!-- Placeholder pages -->
+    <div class="page d-none" id="list-roles">...Listar Roles...</div>
+    <div class="page d-none" id="update-role">...Actualizar Rol...</div>
+    <div class="page d-none" id="delete-role">...Eliminar Rol...</div>
+    <!-- Más páginas aquí -->
+  </div>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Inicialización: solo login visible, menú deshabilitado
+    window.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.page').forEach(pg => {
+        if (pg.id !== 'login') pg.classList.add('d-none');
+      });
+      document.querySelectorAll('.nav-link').forEach(lnk => {
+        lnk.classList.add('disabled');
+      });
+    });
+
+    // Manejar login
+    document.getElementById('login-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const usuario  = document.getElementById('login-usuario').value.trim();
+      const password = document.getElementById('login-password').value;
+      const res = await fetch('/login', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ usuario, password })
+      });
+      const resultDiv = document.getElementById('login-result');
+      resultDiv.innerHTML = '';
+      if (res.ok) {
+        document.querySelectorAll('.nav-link').forEach(lnk => lnk.classList.remove('disabled'));
+        document.getElementById('login').classList.add('d-none');
+        document.getElementById('create-role').classList.remove('d-none');
+      } else {
+        const err = await res.json().catch(()=>({error:'Error'}));
+        resultDiv.innerHTML = `<div class="alert alert-danger">${err.error}</div>`;
+      }
+    });
+
+    // Navegación entre páginas
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelectorAll('.nav-link').forEach(lnk => lnk.classList.remove('active'));
+        this.classList.add('active');
+        const pageId = this.getAttribute('data-page');
+        document.querySelectorAll('.page').forEach(pg => pg.classList.add('d-none'));
+        document.getElementById(pageId).classList.remove('d-none');
+      });
+    });
+  </script>
+</body>
+</html>
