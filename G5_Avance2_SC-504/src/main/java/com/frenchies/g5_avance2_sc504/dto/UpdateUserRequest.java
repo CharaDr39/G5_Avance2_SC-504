@@ -1,0 +1,30 @@
+package com.frenchies.g5_avance2_sc504.dto;
+
+public class UpdateUserRequest {
+    private String usuario;
+    private String password;
+    private Long rolId;
+
+    public UpdateUserRequest() {}
+
+    public String getUsuario() {
+        return usuario;
+    }
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Long getRolId() {
+        return rolId;
+    }
+    public void setRolId(Long rolId) {
+        this.rolId = rolId;
+    }
+}

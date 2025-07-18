@@ -76,17 +76,16 @@ public class RoleRepository {
     }
 
     public List<Map<String, Object>> listRoles() {
-        // Los alias entre comillas obligan a usar minúsculas
-        String sql = """
-          SELECT
-            rol_id    AS "rol_id",
-            nombre    AS "nombre",
-            descripcion AS "descripcion"
-          FROM ROL
-          ORDER BY rol_id
-        """;
+        String sql = ""
+          + "SELECT "
+          + "  rol_id      AS \"ROL_ID\", "
+          + "  nombre      AS \"NOMBRE\", "
+          + "  descripcion AS \"DESCRIPCION\" "
+          + "FROM ROL "
+          + "ORDER BY rol_id";
         return jdbc.queryForList(sql);
     }
+
 
 }
 
