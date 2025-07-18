@@ -8,25 +8,13 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body { margin:0; padding:0; background-color: #121212; color: #ffffff; font-family: sans-serif; }
-    .sidebar {
-      position: fixed; top: 0; left: 0;
-      width: 250px; height: 100%;
-      background-color: #1e1e1e; padding-top: 1rem; overflow-y: auto;
-    }
-    .content {
-      margin-left: 250px; padding: 2rem;
-    }
-    .accordion-button,
-    .accordion-button.collapsed {
-      background-color: #1e1e1e; color: #ffffff; border: none; box-shadow: none;
-    }
+    .sidebar { position: fixed; top: 0; left: 0; width: 250px; height: 100%; background-color: #1e1e1e; padding-top: 1rem; overflow-y: auto; }
+    .content { margin-left: 250px; padding: 2rem; }
+    .accordion-button, .accordion-button.collapsed { background-color: #1e1e1e; color: #ffffff; border: none; box-shadow: none; }
     .accordion-button::after { filter: invert(1); }
     .accordion-body { background-color: #1e1e1e; padding: 0; }
     .nav-link { color: #ffffff; padding: 0.5rem 1rem; font-size: 0.9rem; text-decoration: none; }
-    .nav-link:hover,
-    .nav-link.active {
-      background-color: #333333; color: #ffffff;
-    }
+    .nav-link:hover, .nav-link.active { background-color: #333333; color: #ffffff; }
     .nav-link.disabled { opacity: 0.5; pointer-events: none; }
     .btn-primary { background-color: #bb86fc; border-color: #bb86fc; color: #121212; }
     .form-control { background-color: #2a2a2a; color: #ffffff; border: 1px solid #444; }
@@ -44,111 +32,20 @@
   <nav class="sidebar">
     <h4 class="text-center mb-4">Funciones</h4>
     <div class="accordion" id="sidebarAccordion">
-      <!-- Roles -->
       <div class="accordion-item">
-        <h2 class="accordion-header" id="headingRoles">
-          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRoles" aria-expanded="true" aria-controls="collapseRoles">
-            Roles
+        <h2 class="accordion-header" id="headingMain">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMain" aria-expanded="true" aria-controls="collapseMain">
+            General
           </button>
         </h2>
-        <div id="collapseRoles" class="accordion-collapse collapse show" aria-labelledby="headingRoles" data-bs-parent="#sidebarAccordion">
+        <div id="collapseMain" class="accordion-collapse collapse show" data-bs-parent="#sidebarAccordion">
           <div class="accordion-body">
             <ul class="nav flex-column">
               <li><a href="#" class="nav-link active" data-page="login">Login</a></li>
-              <li><a href="#" class="nav-link" data-page="create-role">Crear Rol</a></li>
-              <li><a href="#" class="nav-link" data-page="list-roles">Listar Roles</a></li>
-              <li><a href="#" class="nav-link" data-page="update-role">Actualizar Rol</a></li>
-              <li><a href="#" class="nav-link" data-page="delete-role">Eliminar Rol</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <!-- Usuarios -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="headingUsers">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUsers" aria-expanded="false" aria-controls="collapseUsers">
-            Usuarios
-          </button>
-        </h2>
-        <div id="collapseUsers" class="accordion-collapse collapse" aria-labelledby="headingUsers" data-bs-parent="#sidebarAccordion">
-          <div class="accordion-body">
-            <ul class="nav flex-column">
-              <li><a href="#" class="nav-link" data-page="create-user">Crear Usuario</a></li>
-              <li><a href="#" class="nav-link" data-page="list-users">Listar Usuarios</a></li>
-              <li><a href="#" class="nav-link" data-page="update-user">Actualizar Usuario</a></li>
-              <li><a href="#" class="nav-link" data-page="delete-user">Eliminar Usuario</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <!-- Asistencias -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="headingAsist">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAsist" aria-expanded="false" aria-controls="collapseAsist">
-            Asistencias
-          </button>
-        </h2>
-        <div id="collapseAsist" class="accordion-collapse collapse" aria-labelledby="headingAsist" data-bs-parent="#sidebarAccordion">
-          <div class="accordion-body">
-            <ul class="nav flex-column">
-              <li><a href="#" class="nav-link" data-page="create-asistencia">Crear Asistencia</a></li>
-              <li><a href="#" class="nav-link" data-page="list-asistencias">Listar Asistencias</a></li>
-              <li><a href="#" class="nav-link" data-page="update-asistencia">Actualizar Asistencia</a></li>
-              <li><a href="#" class="nav-link" data-page="delete-asistencia">Eliminar Asistencia</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <!-- Productos -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="headingProd">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProd" aria-expanded="false" aria-controls="collapseProd">
-            Productos
-          </button>
-        </h2>
-        <div id="collapseProd" class="accordion-collapse collapse" aria-labelledby="headingProd" data-bs-parent="#sidebarAccordion">
-          <div class="accordion-body">
-            <ul class="nav flex-column">
-              <li><a href="#" class="nav-link" data-page="create-producto">Crear Producto</a></li>
-              <li><a href="#" class="nav-link" data-page="list-productos">Listar Productos</a></li>
-              <li><a href="#" class="nav-link" data-page="update-producto">Actualizar Producto</a></li>
-              <li><a href="#" class="nav-link" data-page="delete-producto">Eliminar Producto</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <!-- Facturas -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="headingFacturas">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFact" aria-expanded="false" aria-controls="collapseFact">
-            Facturas
-          </button>
-        </h2>
-        <div id="collapseFact" class="accordion-collapse collapse" aria-labelledby="headingFacturas" data-bs-parent="#sidebarAccordion">
-          <div class="accordion-body">
-            <ul class="nav flex-column">
-              <li><a href="#" class="nav-link" data-page="create-factura">Crear Factura</a></li>
-              <li><a href="#" class="nav-link" data-page="list-facturas">Listar Facturas</a></li>
-              <li><a href="#" class="nav-link" data-page="update-factura">Actualizar Factura</a></li>
-              <li><a href="#" class="nav-link" data-page="delete-factura">Eliminar Factura</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <!-- Reportes -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="headingReportes">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRep" aria-expanded="false" aria-controls="collapseRep">
-            Reportes
-          </button>
-        </h2>
-        <div id="collapseRep" class="accordion-collapse collapse" aria-labelledby="headingReportes" data-bs-parent="#sidebarAccordion">
-          <div class="accordion-body">
-            <ul class="nav flex-column">
-              <li><a href="#" class="nav-link" data-page="ventas-dia">Ventas del Día</a></li>
-              <li><a href="#" class="nav-link" data-page="ventas-user">Ventas por Usuario</a></li>
-              <li><a href="#" class="nav-link" data-page="stock-bajo">Stock Bajo</a></li>
-              <li><a href="#" class="nav-link" data-page="asistencia-hoy">Asistencia Hoy</a></li>
+              <li><a href="#" class="nav-link disabled" data-page="create-role">Crear Rol</a></li>
+              <li><a href="#" class="nav-link disabled" data-page="list-roles">Listar Roles</a></li>
+              <li><a href="#" class="nav-link disabled" data-page="update-role">Actualizar Rol</a></li>
+              <li><a href="#" class="nav-link disabled" data-page="delete-role">Eliminar Rol</a></li>
             </ul>
           </div>
         </div>
@@ -157,12 +54,7 @@
   </nav>
 
   <div class="content">
-    <div class="intro">
-      <strong>Bienvenido a Frenchies API Frontend</strong><br>
-      Este proyecto fue un reto personal de backend y frontend con Spring Boot y Oracle. Me tomó varias noches, varias latas de Monster y mucho trabajo para integrar la base de datos, exponer los procedimientos y diseñar esta UI. ¡Gracias por llegar hasta aquí!
-    </div>
     <h1>Frenchies - Gestión</h1>
-
     <!-- LOGIN PAGE -->
     <div class="page" id="login">
       <div class="card p-4 mb-4">
@@ -185,7 +77,7 @@
     <!-- CREATE ROLE PAGE -->
     <div class="page d-none" id="create-role">
       <div class="card p-4 mb-4">
-        <h5 class="card-title mb-3">Crear Nuevo Rol</h5>
+        <h5 class="card-title">Crear Nuevo Rol</h5>
         <form id="role-form">
           <div class="mb-3">
             <label for="nombre" class="form-label">Nombre</label>
@@ -201,37 +93,74 @@
       </div>
     </div>
 
-    <!-- Placeholder pages -->
-    <div class="page d-none" id="list-roles">...Listar Roles...</div>
-    <div class="page d-none" id="update-role">...Actualizar Rol...</div>
-    <div class="page d-none" id="delete-role">...Eliminar Rol...</div>
-    <!-- Más páginas aquí -->
+    <!-- LIST ROLE PAGE -->
+    <div class="page d-none" id="list-roles">
+      <div class="card p-4 mb-4">
+        <h5 class="card-title">Listado de Roles</h5>
+        <button id="load-roles" class="btn btn-secondary mb-3">Cargar Roles</button>
+        <ul class="list-group" id="roles-list"></ul>
+      </div>
+    </div>
+
+    <!-- UPDATE ROLE PAGE -->
+    <div class="page d-none" id="update-role">
+      <div class="card p-4 mb-4">
+        <h5 class="card-title">Actualizar Rol</h5>
+        <form id="update-form">
+          <div class="mb-3">
+            <label for="update-id" class="form-label">ID Rol</label>
+            <input type="number" id="update-id" class="form-control" placeholder="Ej. 1" required>
+          </div>
+          <div class="mb-3">
+            <label for="update-nombre" class="form-label">Nuevo Nombre</label>
+            <input type="text" id="update-nombre" class="form-control" placeholder="Ej. Admin Senior" required>
+          </div>
+          <div class="mb-3">
+            <label for="update-descripcion" class="form-label">Nueva Descripción</label>
+            <input type="text" id="update-descripcion" class="form-control" placeholder="Ej. Descripción actualizada">
+          </div>
+          <button type="submit" class="btn btn-primary">Actualizar</button>
+        </form>
+        <div id="update-result"></div>
+      </div>
+    </div>
+
+    <!-- DELETE ROLE PAGE -->
+    <div class="page d-none" id="delete-role">
+      <div class="card p-4 mb-4">
+        <h5 class="card-title">Eliminar Rol</h5>
+        <form id="delete-form">
+          <div class="mb-3">
+            <label for="delete-id" class="form-label">ID Rol</label>
+            <input type="number" id="delete-id" class="form-control" placeholder="Ej. 1" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Eliminar</button>
+        </</form>
+        <div id="delete-result"></div>
+      </div>
+    </div>
   </div>
 
   <!-- Bootstrap JS Bundle -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Inicialización: solo login visible, menú deshabilitado
+    // Inicialización: login solo y menú deshabilitado
     window.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('.page').forEach(pg => {
         if (pg.id !== 'login') pg.classList.add('d-none');
       });
       document.querySelectorAll('.nav-link').forEach(lnk => {
-        lnk.classList.add('disabled');
+        if (lnk.getAttribute('data-page') !== 'login') lnk.classList.add('disabled');
       });
     });
 
-    // Manejar login
+    // Login
     document.getElementById('login-form').addEventListener('submit', async function(e) {
       e.preventDefault();
-      const usuario  = document.getElementById('login-usuario').value.trim();
+      const usuario = document.getElementById('login-usuario').value.trim();
       const password = document.getElementById('login-password').value;
-      const res = await fetch('/login', {
-        method: 'POST', headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ usuario, password })
-      });
-      const resultDiv = document.getElementById('login-result');
-      resultDiv.innerHTML = '';
+      const res = await fetch('/login', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ usuario, password }) });
+      const resultDiv = document.getElementById('login-result'); resultDiv.innerHTML = '';
       if (res.ok) {
         document.querySelectorAll('.nav-link').forEach(lnk => lnk.classList.remove('disabled'));
         document.getElementById('login').classList.add('d-none');
@@ -239,6 +168,72 @@
       } else {
         const err = await res.json().catch(()=>({error:'Error'}));
         resultDiv.innerHTML = `<div class="alert alert-danger">${err.error}</div>`;
+      }
+    });
+
+    // Crear rol
+    document.getElementById('role-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const nombre = document.getElementById('nombre').value;
+      const descripcion = document.getElementById('descripcion').value;
+      const res = await fetch('/roles', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ nombre, descripcion }) });
+      const resultDiv = document.getElementById('result'); resultDiv.innerHTML = '';
+      if (res.ok) {
+        const data = await res.json();
+        resultDiv.innerHTML = `<div class="alert alert-success">Rol creado con ID: <strong>${data.rol_id}</strong></div>`;
+        e.target.reset();
+      } else {
+        const err = await res.json().catch(()=>({error:'Error'}));
+        resultDiv.innerHTML = `<div class="alert alert-danger">${err.error}</div>`;
+      }
+    });
+
+    // Listar roles
+    document.getElementById('load-roles').addEventListener('click', async () => {
+      const list = document.getElementById('roles-list'); list.innerHTML = '';
+      const res = await fetch('/roles');
+      if (res.ok) {
+        const roles = await res.json();
+        roles.forEach(r => {
+          const li = document.createElement('li');
+          li.className = 'list-group-item bg-dark text-light';
+          li.textContent = `ID ${r.rol_id}: ${r.nombre} (${r.descripcion || '-'})`;
+          list.appendChild(li);
+        });
+      } else {
+        list.innerHTML = '<li class="list-group-item bg-dark text-danger">Error cargando roles</li>';
+      }
+    });
+
+    // Actualizar rol
+    document.getElementById('update-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const id = document.getElementById('update-id').value;
+      const nombre = document.getElementById('update-nombre').value;
+      const descripcion = document.getElementById('update-descripcion').value;
+      const res = await fetch(`/roles/${id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ nombre, descripcion }) });
+      const resultDiv = document.getElementById('update-result'); resultDiv.innerHTML = '';
+      if (res.status === 204) {
+        resultDiv.innerHTML = `<div class="alert alert-success">Rol ${id} actualizado</div>`;
+        e.target.reset();
+      } else {
+        const err = await res.text();
+        resultDiv.innerHTML = `<div class="alert alert-danger">Error: ${err}</div>`;
+      }
+    });
+
+    // Eliminar rol
+    document.getElementById('delete-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const id = document.getElementById('delete-id').value;
+      const res = await fetch(`/roles/${id}`, { method: 'DELETE' });
+      const resultDiv = document.getElementById('delete-result'); resultDiv.innerHTML = '';
+      if (res.status === 204) {
+        resultDiv.innerHTML = `<div class="alert alert-success">Rol ${id} eliminado</div>`;
+        e.target.reset();
+      } else {
+        const err = await res.text();
+        resultDiv.innerHTML = `<div class="alert alert-danger">Error: ${err}</div>`;
       }
     });
 
