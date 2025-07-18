@@ -5,58 +5,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Frenchies ‑ Gestión</title>
 
-  <!-- Bootstrap -->
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-  />
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 
   <style>
-    /* —— Colores oscuros y tipografía —— */
-    body            { margin:0;padding:0;background:#121212;color:#fff;font-family:sans-serif }
-    h1              { font-size:1.8rem;margin-bottom:1rem }
-    .sidebar        { position:fixed;top:0;left:0;width:250px;height:100%;background:#1e1e1e;overflow-y:auto;padding-top:1rem }
-    .content        { margin-left:250px;padding:2rem }
-    .card,.page     { background:#1e1e1e;border:1px solid #333 }
-    .form-control   { background:#2a2a2a;border:1px solid #444;color:#fff }
-    .form-control::placeholder{color:#888}
-    .btn-primary    { background:#bb86fc;border-color:#bb86fc;color:#121212 }
-    .btn-secondary  { background:#333;border-color:#333;color:#fff }
+    /* —— Tema oscuro —— */
+    body{margin:0;padding:0;background:#121212;color:#fff;font-family:sans-serif}
+    h1{font-size:1.8rem;margin-bottom:1rem}
+    .sidebar{position:fixed;top:0;left:0;width:250px;height:100%;background:#1e1e1e;overflow-y:auto;padding-top:1rem}
+    .content{margin-left:250px;padding:2rem}
+    .card,.page{background:#1e1e1e;border:1px solid #333}
+    .card h5{color:#fff}                       /* <<< titulares visibles */
+    .form-control,.form-control:focus{background:#2a2a2a;border:1px solid #444;color:#fff}
+    select.form-control{background:#2a2a2a;color:#fff}  /* <<< select oscuro */
+    .btn-primary{background:#bb86fc;border-color:#bb86fc;color:#121212}
+    .btn-secondary{background:#333;border-color:#333;color:#fff}
+    .alert-success{background:#388e3c;color:#e8f5e9}
+    .alert-danger{background:#d32f2f;color:#ffebee}
+
+    /* —— Menú lateral —— */
     .accordion-button,.accordion-button.collapsed{background:#1e1e1e;color:#fff;border:none}
     .accordion-button::after{filter:invert(1)}
+    .accordion-body{background:#1e1e1e;padding:0}
+    .accordion-item{background:#1e1e1e;border:none}      /* <<< borra fondo blanco */
     .nav-link{color:#fff;padding:.5rem 1rem;text-decoration:none}
     .nav-link:hover,.nav-link.active{background:#333}
     .nav-link.disabled{opacity:.5;pointer-events:none}
-    .alert-success{background:#388e3c;color:#e8f5e9}
-    .alert-danger {background:#d32f2f;color:#ffebee}
   </style>
 </head>
 
 <body>
-  <!-- ——————————— Lateral ——————————— -->
+  <!-- ————— SIDEBAR ————— -->
   <nav class="sidebar">
-    <button class="btn btn-outline-light w-75 mx-auto mb-3" id="btn-login">
-      Login
-    </button>
+    <button class="btn btn-outline-light w-75 mx-auto mb-3" id="btn-login">Login</button>
 
     <div class="accordion" id="sidebarAccordion">
-      <!-- ‑‑ Roles ‑‑ -->
+      <!-- Roles -->
       <div class="accordion-item">
         <h2 class="accordion-header" id="headingRoles">
-          <button
-            class="accordion-button collapsed"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#collapseRoles"
-          >
-            Roles
-          </button>
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRoles">Roles</button>
         </h2>
-        <div
-          id="collapseRoles"
-          class="accordion-collapse collapse"
-          data-bs-parent="#sidebarAccordion"
-        >
+        <div id="collapseRoles" class="accordion-collapse collapse" data-bs-parent="#sidebarAccordion">
           <ul class="nav flex-column accordion-body p-0">
             <li><a class="nav-link disabled" data-page="create-role">Crear Rol</a></li>
             <li><a class="nav-link disabled" data-page="list-roles">Listar Roles</a></li>
@@ -66,23 +55,12 @@
         </div>
       </div>
 
-      <!-- ‑‑ Usuarios ‑‑ -->
+      <!-- Usuarios -->
       <div class="accordion-item">
         <h2 class="accordion-header" id="headingUsers">
-          <button
-            class="accordion-button collapsed"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#collapseUsers"
-          >
-            Usuarios
-          </button>
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUsers">Usuarios</button>
         </h2>
-        <div
-          id="collapseUsers"
-          class="accordion-collapse collapse"
-          data-bs-parent="#sidebarAccordion"
-        >
+        <div id="collapseUsers" class="accordion-collapse collapse" data-bs-parent="#sidebarAccordion">
           <ul class="nav flex-column accordion-body p-0">
             <li><a class="nav-link disabled" data-page="create-user">Crear Usuario</a></li>
             <li><a class="nav-link disabled" data-page="list-users">Listar Usuarios</a></li>
@@ -92,23 +70,12 @@
         </div>
       </div>
 
-      <!-- ‑‑ Facturas ‑‑ -->
+      <!-- Facturas -->
       <div class="accordion-item">
         <h2 class="accordion-header" id="headingFact">
-          <button
-            class="accordion-button collapsed"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#collapseFacturas"
-          >
-            Facturas
-          </button>
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFacturas">Facturas</button>
         </h2>
-        <div
-          id="collapseFacturas"
-          class="accordion-collapse collapse"
-          data-bs-parent="#sidebarAccordion"
-        >
+        <div id="collapseFacturas" class="accordion-collapse collapse" data-bs-parent="#sidebarAccordion">
           <ul class="nav flex-column accordion-body p-0">
             <li><a class="nav-link disabled" data-page="create-factura">Crear Factura</a></li>
             <li><a class="nav-link disabled" data-page="list-facturas">Listar Facturas</a></li>
@@ -120,26 +87,26 @@
     </div>
   </nav>
 
-  <!-- ——————————— Contenido ——————————— -->
+  <!-- ————— CONTENIDO ————— -->
   <div class="content">
     <h1>Frenchies ‑ Gestión</h1>
 
-    <!-- ******************************** LOGIN ******************************** -->
+    <!-- **** LOGIN **** -->
     <div id="login-page" class="page">
-      <div class="card p-4 mb-4">
+      <div class="card p-4">
         <h5>Iniciar Sesión</h5>
         <form id="login-form" class="mt-3">
-          <input class="form-control mb-3" id="login-usuario" placeholder="Ej. CAJERO1" required />
-          <input type="password" class="form-control mb-3" id="login-password" placeholder="Contraseña" required />
+          <input id="login-usuario" class="form-control mb-3" placeholder="Ej. CAJERO1" required />
+          <input type="password" id="login-password" class="form-control mb-3" placeholder="Contraseña" required />
           <button class="btn btn-primary">Entrar</button>
         </form>
         <div id="login-result" class="mt-2"></div>
       </div>
     </div>
 
-    <!-- ***** ROL ***** -->
+    <!-- **** ROL **** -->
     <div id="create-role-page" class="page d-none">
-      <div class="card p-4 mb-4">
+      <div class="card p-4">
         <h5>Crear Nuevo Rol</h5>
         <form id="role-form" class="mt-3">
           <input id="nombre" class="form-control mb-3" placeholder="Nombre del Rol" required />
@@ -151,7 +118,7 @@
     </div>
 
     <div id="list-roles-page" class="page d-none">
-      <div class="card p-4 mb-4">
+      <div class="card p-4">
         <h5>Listado de Roles</h5>
         <button id="load-roles" class="btn btn-secondary mb-3">Cargar Roles</button>
         <ul id="roles-list" class="list-group"></ul>
@@ -159,7 +126,7 @@
     </div>
 
     <div id="update-role-page" class="page d-none">
-      <div class="card p-4 mb-4">
+      <div class="card p-4">
         <h5>Actualizar Rol</h5>
         <form id="update-form" class="mt-3">
           <input type="number" id="update-id" class="form-control mb-3" placeholder="ID Rol" required />
@@ -172,7 +139,7 @@
     </div>
 
     <div id="delete-role-page" class="page d-none">
-      <div class="card p-4 mb-4">
+      <div class="card p-4">
         <h5>Eliminar Rol</h5>
         <form id="delete-form" class="mt-3">
           <input type="number" id="delete-id" class="form-control mb-3" placeholder="ID Rol" required />
@@ -182,9 +149,9 @@
       </div>
     </div>
 
-    <!-- ***** USUARIOS ***** -->
+    <!-- **** USUARIOS **** -->
     <div id="create-user-page" class="page d-none">
-      <div class="card p-4 mb-4">
+      <div class="card p-4">
         <h5>Crear Usuario</h5>
         <form id="user-form" class="mt-3">
           <input id="user-usuario" class="form-control mb-3" placeholder="Usuario" required />
@@ -197,7 +164,7 @@
     </div>
 
     <div id="list-users-page" class="page d-none">
-      <div class="card p-4 mb-4">
+      <div class="card p-4">
         <h5>Listado de Usuarios</h5>
         <button id="load-users" class="btn btn-secondary mb-3">Cargar Usuarios</button>
         <ul id="users-list" class="list-group"></ul>
@@ -205,7 +172,7 @@
     </div>
 
     <div id="update-user-page" class="page d-none">
-      <div class="card p-4 mb-4">
+      <div class="card p-4">
         <h5>Actualizar Usuario</h5>
         <form id="update-user-form" class="mt-3">
           <input type="number" id="update-user-id" class="form-control mb-3" placeholder="ID Usuario" required />
@@ -219,7 +186,7 @@
     </div>
 
     <div id="delete-user-page" class="page d-none">
-      <div class="card p-4 mb-4">
+      <div class="card p-4">
         <h5>Eliminar Usuario</h5>
         <form id="delete-user-form" class="mt-3">
           <input type="number" id="delete-user-id" class="form-control mb-3" placeholder="ID Usuario" required />
@@ -229,9 +196,9 @@
       </div>
     </div>
 
-    <!-- ***** FACTURAS ***** -->
+    <!-- **** FACTURAS **** -->
     <div id="create-factura-page" class="page d-none">
-      <div class="card p-4 mb-4">
+      <div class="card p-4">
         <h5>Crear Factura</h5>
         <form id="factura-form" class="mt-3">
           <select id="factura-usuario-id" class="form-control mb-3" required></select>
@@ -243,7 +210,7 @@
     </div>
 
     <div id="list-facturas-page" class="page d-none">
-      <div class="card p-4 mb-4">
+      <div class="card p-4">
         <h5>Listado de Facturas</h5>
         <button id="load-facturas" class="btn btn-secondary mb-3">Cargar Facturas</button>
         <ul id="facturas-list" class="list-group"></ul>
@@ -251,7 +218,7 @@
     </div>
 
     <div id="update-factura-page" class="page d-none">
-      <div class="card p-4 mb-4">
+      <div class="card p-4">
         <h5>Actualizar Factura</h5>
         <form id="update-factura-form" class="mt-3">
           <input type="number" id="update-factura-id" class="form-control mb-3" placeholder="ID Factura" required />
@@ -263,7 +230,7 @@
     </div>
 
     <div id="delete-factura-page" class="page d-none">
-      <div class="card p-4 mb-4">
+      <div class="card p-4">
         <h5>Eliminar Factura</h5>
         <form id="delete-factura-form" class="mt-3">
           <input type="number" id="delete-factura-id" class="form-control mb-3" placeholder="ID Factura" required />
@@ -274,218 +241,241 @@
     </div>
   </div>
 
-  <!-- Bootstrap -->
+  <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- ————————  JS principal ————————— -->
+  <!-- ———— JS principal ———— -->
   <script>
-    /* ========================================================
-       utilidades
-    ======================================================== */
-    function qs(id){return document.getElementById(id)}
-    function clear(el){el.innerHTML=''}
-    function msgOK(el,txt){el.innerHTML='<div class="alert alert-success">'+txt+'</div>'}
-    function msgErr(el,txt){el.innerHTML='<div class="alert alert-danger">'+txt+'</div>'}
+    /* utilidades */
+    const qs = id => document.getElementById(id);
+    const clear = el => (el.innerHTML = '');
+    const msgOK  = (el, t) => (el.innerHTML = '<div class="alert alert-success">' + t + '</div>');
+    const msgErr = (el, t) => (el.innerHTML = '<div class="alert alert-danger">' + t + '</div>');
 
-    /* ========================================================
-       navegacion
-    ======================================================== */
-    function showPage(name){
-      document.querySelectorAll('.page').forEach(p=>p.classList.add('d-none'))
-      qs(name+'-page').classList.remove('d-none')
+    /* navegación */
+    function showPage(name) {
+      document.querySelectorAll('.page').forEach(p => p.classList.add('d-none'));
+      qs(name + '-page').classList.remove('d-none');
     }
-    document.getElementById('btn-login').onclick=()=>showPage('login')
-    document.querySelectorAll('.nav-link').forEach(a=>{
-      a.onclick=e=>{
-        e.preventDefault()
-        if(a.classList.contains('disabled')) return
-        document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'))
-        a.classList.add('active')
-        showPage(a.dataset.page)
-      }
-    })
+    document.getElementById('btn-login').onclick = () => showPage('login');
+    document.querySelectorAll('.nav-link').forEach(a => {
+      a.onclick = e => {
+        e.preventDefault();
+        if (a.classList.contains('disabled')) return;
+        document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+        a.classList.add('active');
+        showPage(a.dataset.page);
+      };
+    });
 
-    /* ========================================================
-       carga dinamica de selects
-    ======================================================== */
-    async function loadRolesIntoSelect(id){
-      const sel=qs(id); clear(sel)
-      sel.innerHTML='<option value=\"\">-- Rol --</option>'
-      const r=await fetch('/roles'); if(!r.ok) return
-      const data=await r.json()
-      data.forEach(o=>{
-        const opt=document.createElement('option')
-        opt.value=o.ROL_ID; opt.textContent=`${o.ROL_ID} — ${o.NOMBRE}`
-        sel.appendChild(opt)
-      })
+    /* selects din ámicos */
+    async function loadRolesIntoSelect(id) {
+      const sel = qs(id);
+      clear(sel);
+      sel.innerHTML = '<option value="">-- Rol --</option>';
+      const r = await fetch('/roles');
+      if (!r.ok) return;
+      (await r.json()).forEach(o => {
+        const opt = document.createElement('option');
+        opt.value = o.ROL_ID;
+        opt.textContent = `${o.ROL_ID} — ${o.NOMBRE}`;
+        sel.appendChild(opt);
+      });
     }
-    async function loadUsersIntoSelect(id){
-      const sel=qs(id); clear(sel)
-      sel.innerHTML='<option value=\"\">-- Usuario --</option>'
-      const r=await fetch('/usuarios'); if(!r.ok) return
-      const data=await r.json()
-      data.forEach(u=>{
-        const opt=document.createElement('option')
-        opt.value=u.USUARIO_ID; opt.textContent=`${u.USUARIO_ID} — ${u.USUARIO}`
-        sel.appendChild(opt)
-      })
+    async function loadUsersIntoSelect(id) {
+      const sel = qs(id);
+      clear(sel);
+      sel.innerHTML = '<option value="">-- Usuario --</option>';
+      const r = await fetch('/usuarios');
+      if (!r.ok) return;
+      (await r.json()).forEach(u => {
+        const opt = document.createElement('option');
+        opt.value = u.USUARIO_ID;
+        opt.textContent = `${u.USUARIO_ID} — ${u.USUARIO}`;
+        sel.appendChild(opt);
+      });
     }
 
-    /* ========================================================
-       login
-    ======================================================== */
-    qs('login-form').onsubmit=async e=>{
-      e.preventDefault()
-      const usuario=qs('login-usuario').value.trim()
-      const password=qs('login-password').value
-      const res=await fetch('/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({usuario,password})})
-      const div=qs('login-result'); clear(div)
-      if(res.ok){
-        document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('disabled'))
-        showPage('create-role')
-      }else{
-        msgErr(div,'Credenciales inválidas')
-      }
-    }
+    /* login */
+    qs('login-form').onsubmit = async e => {
+      e.preventDefault();
+      const usuario = qs('login-usuario').value.trim();
+      const password = qs('login-password').value;
+      const r = await fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ usuario, password })
+      });
+      const div = qs('login-result');
+      clear(div);
+      if (r.ok) {
+        document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('disabled'));
+        showPage('create-role');
+      } else msgErr(div, 'Credenciales inválidas');
+    };
 
-    /* ========================================================
-       CRUD Roles
-    ======================================================== */
-    qs('role-form').onsubmit=async e=>{
-      e.preventDefault()
-      const nombre=qs('nombre').value.trim()
-      const descripcion=qs('descripcion').value.trim()
-      const r=await fetch('/roles',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nombre,descripcion})})
-      const div=qs('result'); clear(div)
-      if(r.ok){const d=await r.json();msgOK(div,'Creado Rol ID '+d.rol_id);e.target.reset()}
-      else{msgErr(div,'Error')}
-    }
-    qs('load-roles').onclick=async()=>{
-      const list=qs('roles-list'); clear(list)
-      const r=await fetch('/roles')
-      if(r.ok){
-        (await r.json()).forEach(o=>{
-          const li=document.createElement('li')
-          li.className='list-group-item bg-dark text-light'
-          li.textContent=`ID ${o.ROL_ID}: ${o.NOMBRE} (${o.DESCRIPCION||'-'})`
-          list.appendChild(li)
-        })
-      }else msgErr(list,'Error')
-    }
-    qs('update-form').onsubmit=async e=>{
-      e.preventDefault()
-      const id=qs('update-id').value
-      const nombre=qs('update-nombre').value.trim()
-      const descripcion=qs('update-descripcion').value.trim()
-      const r=await fetch('/roles/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({nombre,descripcion})})
-      const div=qs('update-result'); clear(div)
-      r.status===204?msgOK(div,'Actualizado'):msgErr(div,'Error')
-    }
-    qs('delete-form').onsubmit=async e=>{
-      e.preventDefault()
-      const id=qs('delete-id').value
-      const r=await fetch('/roles/'+id,{method:'DELETE'})
-      const div=qs('delete-result'); clear(div)
-      r.status===204?msgOK(div,'Eliminado'):msgErr(div,'Error')
-    }
+    /* CRUD roles */
+    qs('role-form').onsubmit = async e => {
+      e.preventDefault();
+      const nombre = qs('nombre').value.trim();
+      const descripcion = qs('descripcion').value.trim();
+      const r = await fetch('/roles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre, descripcion })
+      });
+      const div = qs('result');
+      clear(div);
+      r.ok ? msgOK(div, 'Rol creado') : msgErr(div, 'Error');
+      if (r.ok) e.target.reset();
+    };
+    qs('load-roles').onclick = async () => {
+      const list = qs('roles-list');
+      clear(list);
+      const r = await fetch('/roles');
+      if (r.ok) {
+        (await r.json()).forEach(o => {
+          const li = document.createElement('li');
+          li.className = 'list-group-item bg-dark text-light';
+          li.textContent = `ID ${o.ROL_ID}: ${o.NOMBRE} (${o.DESCRIPCION || '-'})`;
+          list.appendChild(li);
+        });
+      } else msgErr(list, 'Error');
+    };
+    qs('update-form').onsubmit = async e => {
+      e.preventDefault();
+      const id = qs('update-id').value;
+      const nombre = qs('update-nombre').value.trim();
+      const descripcion = qs('update-descripcion').value.trim();
+      const r = await fetch('/roles/' + id, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre, descripcion })
+      });
+      const div = qs('update-result');
+      clear(div);
+      r.status === 204 ? msgOK(div, 'Actualizado') : msgErr(div, 'Error');
+    };
+    qs('delete-form').onsubmit = async e => {
+      e.preventDefault();
+      const id = qs('delete-id').value;
+      const r = await fetch('/roles/' + id, { method: 'DELETE' });
+      const div = qs('delete-result');
+      clear(div);
+      r.status === 204 ? msgOK(div, 'Eliminado') : msgErr(div, 'Error');
+    };
 
-    /* ========================================================
-       CRUD Usuarios
-    ======================================================== */
-    qs('user-form').onsubmit=async e=>{
-      e.preventDefault()
-      const usuario=qs('user-usuario').value.trim()
-      const password=qs('user-password').value
-      const rolId=parseInt(qs('user-rol-id').value)
-      const r=await fetch('/usuarios',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({usuario,password,rolId})})
-      const div=qs('user-result'); clear(div)
-      if(r.ok){const d=await r.json();msgOK(div,'Usuario ID '+d.usuario_id);e.target.reset()}
-      else msgErr(div,'Error')
-    }
-    qs('load-users').onclick=async()=>{
-      const list=qs('users-list'); clear(list)
-      const r=await fetch('/usuarios')
-      if(r.ok){
-        (await r.json()).forEach(u=>{
-          const li=document.createElement('li')
-          li.className='list-group-item bg-dark text-light'
-          li.textContent=`ID ${u.USUARIO_ID}: ${u.USUARIO} (Rol ${u.ROL_ID})`
-          list.appendChild(li)
-        })
-      }else msgErr(list,'Error')
-    }
-    qs('update-user-form').onsubmit=async e=>{
-      e.preventDefault()
-      const id=qs('update-user-id').value
-      const usuario=qs('update-user-usuario').value.trim()
-      const password=qs('update-user-password').value
-      const rolId=parseInt(qs('update-user-rol-id').value)
-      const r=await fetch('/usuarios/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({usuario,password,rolId})})
-      const div=qs('update-user-result'); clear(div)
-      r.status===204?msgOK(div,'Actualizado'):msgErr(div,'Error')
-    }
-    qs('delete-user-form').onsubmit=async e=>{
-      e.preventDefault()
-      const id=qs('delete-user-id').value
-      const r=await fetch('/usuarios/'+id,{method:'DELETE'})
-      const div=qs('delete-user-result'); clear(div)
-      r.status===204?msgOK(div,'Eliminado'):msgErr(div,'Error')
-    }
+    /* CRUD usuarios */
+    qs('user-form').onsubmit = async e => {
+      e.preventDefault();
+      const usuario = qs('user-usuario').value.trim();
+      const password = qs('user-password').value;
+      const rolId = parseInt(qs('user-rol-id').value);
+      const r = await fetch('/usuarios', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ usuario, password, rolId })
+      });
+      const div = qs('user-result');
+      clear(div);
+      r.ok ? msgOK(div, 'Usuario creado') : msgErr(div, 'Error');
+      if (r.ok) e.target.reset();
+    };
+    qs('load-users').onclick = async () => {
+      const list = qs('users-list');
+      clear(list);
+      const r = await fetch('/usuarios');
+      if (r.ok) {
+        (await r.json()).forEach(u => {
+          const li = document.createElement('li');
+          li.className = 'list-group-item bg-dark text-light';
+          li.textContent = `ID ${u.USUARIO_ID}: ${u.USUARIO} (Rol ${u.ROL_ID})`;
+          list.appendChild(li);
+        });
+      } else msgErr(list, 'Error');
+    };
+    qs('update-user-form').onsubmit = async e => {
+      e.preventDefault();
+      const id = qs('update-user-id').value;
+      const usuario = qs('update-user-usuario').value.trim();
+      const password = qs('update-user-password').value;
+      const rolId = parseInt(qs('update-user-rol-id').value);
+      const r = await fetch('/usuarios/' + id, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ usuario, password, rolId })
+      });
+      const div = qs('update-user-result');
+      clear(div);
+      r.status === 204 ? msgOK(div, 'Actualizado') : msgErr(div, 'Error');
+    };
+    qs('delete-user-form').onsubmit = async e => {
+      e.preventDefault();
+      const id = qs('delete-user-id').value;
+      const r = await fetch('/usuarios/' + id, { method: 'DELETE' });
+      const div = qs('delete-user-result');
+      clear(div);
+      r.status === 204 ? msgOK(div, 'Eliminado') : msgErr(div, 'Error');
+    };
 
-    /* ========================================================
-       CRUD Facturas
-    ======================================================== */
-    qs('factura-form').onsubmit=async e=>{
-      e.preventDefault()
-      const usuarioId=parseInt(qs('factura-usuario-id').value)
-      const monto=parseFloat(qs('factura-monto').value)
-      const r=await fetch('/facturas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({usuarioId,montoTotal:monto})})
-      const div=qs('factura-result'); clear(div)
-      if(r.ok){const d=await r.json();msgOK(div,'Factura ID '+d.factura_id);e.target.reset()}
-      else msgErr(div,'Error')
-    }
-    qs('load-facturas').onclick=async()=>{
-      const list=qs('facturas-list'); clear(list)
-      const r=await fetch('/facturas')
-      if(r.ok){
-        (await r.json()).forEach(f=>{
-          const li=document.createElement('li')
-          li.className='list-group-item bg-dark text-light'
-          li.textContent=`ID ${f.FACTURA_ID}: ₡${f.MONTO_TOTAL} (Usr ${f.USUARIO_ID})`
-          list.appendChild(li)
-        })
-      }else msgErr(list,'Error')
-    }
-    qs('update-factura-form').onsubmit=async e=>{
-      e.preventDefault()
-      const id=qs('update-factura-id').value
-      const monto=parseFloat(qs('update-factura-monto').value)
-      const r=await fetch('/facturas/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({montoTotal:monto})})
-      const div=qs('update-factura-result'); clear(div)
-      r.status===204?msgOK(div,'Actualizado'):msgErr(div,'Error')
-    }
-    qs('delete-factura-form').onsubmit=async e=>{
-      e.preventDefault()
-      const id=qs('delete-factura-id').value
-      const r=await fetch('/facturas/'+id,{method:'DELETE'})
-      const div=qs('delete-factura-result'); clear(div)
-      r.status===204?msgOK(div,'Eliminado'):msgErr(div,'Error')
-    }
+    /* CRUD facturas */
+    qs('factura-form').onsubmit = async e => {
+      e.preventDefault();
+      const usuarioId = parseInt(qs('factura-usuario-id').value);
+      const montoTotal = parseFloat(qs('factura-monto').value);
+      const r = await fetch('/facturas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ usuarioId, montoTotal })
+      });
+      const div = qs('factura-result');
+      clear(div);
+      r.ok ? msgOK(div, 'Factura creada') : msgErr(div, 'Error');
+      if (r.ok) e.target.reset();
+    };
+    qs('load-facturas').onclick = async () => {
+      const list = qs('facturas-list');
+      clear(list);
+      const r = await fetch('/facturas');
+      if (r.ok) {
+        (await r.json()).forEach(f => {
+          const li = document.createElement('li');
+          li.className = 'list-group-item bg-dark text-light';
+          li.textContent = `ID ${f.FACTURA_ID}: ₡${f.MONTO_TOTAL} (Usr ${f.USUARIO_ID})`;
+          list.appendChild(li);
+        });
+      } else msgErr(list, 'Error');
+    };
+    qs('update-factura-form').onsubmit = async e => {
+      e.preventDefault();
+      const id = qs('update-factura-id').value;
+      const montoTotal = parseFloat(qs('update-factura-monto').value);
+      const r = await fetch('/facturas/' + id, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ montoTotal })
+      });
+      const div = qs('update-factura-result');
+      clear(div);
+      r.status === 204 ? msgOK(div, 'Actualizado') : msgErr(div, 'Error');
+    };
+    qs('delete-factura-form').onsubmit = async e => {
+      e.preventDefault();
+      const id = qs('delete-factura-id').value;
+      const r = await fetch('/facturas/' + id, { method: 'DELETE' });
+      const div = qs('delete-factura-result');
+      clear(div);
+      r.status === 204 ? msgOK(div, 'Eliminado') : msgErr(div, 'Error');
+    };
 
-    /* ========================================================
-       arranque
-    ======================================================== */
-    (function init(){
-      /* Diario dinámico */
-      const p=qs('diario-texto')
-      const tick=()=>{const d=new Date();p.textContent=`Son las ${d.getHours()}:${d.getMinutes().toString().padStart(2,'0')}, Monster casi vacía y todavía faltan 4 cosas…`;};tick();setInterval(tick,6e4)
-
-      /* Bloquear menú al inicio + cargar selects */
-      document.querySelectorAll('.nav-link').forEach(n=>n.classList.add('disabled'))
-      loadRolesIntoSelect('user-rol-id');loadRolesIntoSelect('update-user-rol-id')
-      loadUsersIntoSelect('factura-usuario-id')
-      showPage('login')                 /* página inicial */
-    })()
+    /* inicio */
+    (function init() {
+      document.querySelectorAll('.nav-link').forEach(n => n.classList.add('disabled'));
+      loadRolesIntoSelect('user-rol-id');
+      loadRolesIntoSelect('update-user-rol-id');
+      loadUsersIntoSelect('factura-usuario-id');
+      showPage('login');
+    })();
   </script>
 </body>
 </html>
