@@ -20,19 +20,17 @@ public class AuthRepository {
 
     @PostConstruct
     void init() {
-        // Cambiamos a FIDE_TAREA3_PCK.LOGIN_FN (función que SI funciona)
         this.loginCall = new SimpleJdbcCall(jdbc)
-            .withCatalogName("FIDE_TAREA3_PCK")
+            .withCatalogName("PKG_FRENCHIES")
             .withFunctionName("LOGIN_FN")
             .declareParameters(
               new SqlParameter("P_USUARIO", java.sql.Types.VARCHAR),
               new SqlParameter("P_PASSWORD", java.sql.Types.VARCHAR),
-              // mantenemos tu "RETURN" para que el execute(Map) funcione igual
               new SqlOutParameter("RETURN", java.sql.Types.NUMERIC)
             );
     }
 
-    /** Devuelve usuario_id (>0) o 0 si falla. */
+    /** Devuelve usuario_id (>0) o 0 si falló. */
     public long login(String usuario, String password) {
         Map<String, Object> out = loginCall.execute(
           Map.of("P_USUARIO", usuario, "P_PASSWORD", password)
