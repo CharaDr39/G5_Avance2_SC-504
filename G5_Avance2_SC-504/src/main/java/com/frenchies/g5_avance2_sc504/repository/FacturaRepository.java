@@ -25,29 +25,31 @@ public class FacturaRepository {
     public void init() {
         insCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
-            .withProcedureName("INS_FACTURA")
+            .withProcedureName("FACT_INS_SP")
             .declareParameters(
                 new SqlParameter("P_USUARIO_ID", Types.NUMERIC),
-                new SqlParameter("P_MONTO_TOTAL", Types.NUMERIC),
+                new SqlParameter("P_MONTO_TOTAL", Types.DECIMAL),
                 new SqlOutParameter("P_OUT_ID", Types.NUMERIC)
             );
 
         updCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
-            .withProcedureName("UPD_FACTURA")
+            .withProcedureName("FACT_UPD_SP")
             .declareParameters(
                 new SqlParameter("P_FACTURA_ID", Types.NUMERIC),
-                new SqlParameter("P_MONTO_TOTAL", Types.NUMERIC)
+                new SqlParameter("P_MONTO_TOTAL", Types.DECIMAL)
             );
 
         delCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
-            .withProcedureName("DEL_FACTURA")
-            .declareParameters(new SqlParameter("P_FACTURA_ID", Types.NUMERIC));
+            .withProcedureName("FACT_DEL_SP")
+            .declareParameters(
+                new SqlParameter("P_FACTURA_ID", Types.NUMERIC)
+            );
 
         listCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
-            .withProcedureName("LIST_FACTURAS")
+            .withProcedureName("LST_FACTURAS_SP")
             .declareParameters(new SqlOutParameter("P_CURSOR", Types.REF_CURSOR))
             .returningResultSet("P_CURSOR", (rs, rn) -> Map.of(
                 "FACTURA_ID",  rs.getLong("FACTURA_ID"),

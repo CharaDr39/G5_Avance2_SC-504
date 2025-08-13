@@ -25,7 +25,7 @@ public class RoleRepository {
     public void init() {
         insCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
-            .withProcedureName("INS_ROL")
+            .withProcedureName("ROL_INS_SP")
             .declareParameters(
                 new SqlParameter("P_NOMBRE", Types.VARCHAR),
                 new SqlParameter("P_DESCRIPCION", Types.VARCHAR),
@@ -34,7 +34,7 @@ public class RoleRepository {
 
         updCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
-            .withProcedureName("UPD_ROL")
+            .withProcedureName("ROL_UPD_SP")
             .declareParameters(
                 new SqlParameter("P_ROL_ID", Types.NUMERIC),
                 new SqlParameter("P_NOMBRE", Types.VARCHAR),
@@ -43,14 +43,14 @@ public class RoleRepository {
 
         delCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
-            .withProcedureName("DEL_ROL")
+            .withProcedureName("ROL_DEL_SP")
             .declareParameters(
                 new SqlParameter("P_ROL_ID", Types.NUMERIC)
             );
 
         listCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
-            .withProcedureName("LIST_ROLES")
+            .withProcedureName("LST_ROLES_SP")
             .declareParameters(new SqlOutParameter("P_CURSOR", Types.REF_CURSOR))
             .returningResultSet("P_CURSOR", (rs, rn) -> Map.of(
                 "ROL_ID", rs.getLong("ROL_ID"),

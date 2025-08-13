@@ -25,7 +25,7 @@ public class UserRepository {
     public void init() {
         insCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
-            .withProcedureName("INS_USUARIO")
+            .withProcedureName("USU_INS_SP")
             .declareParameters(
                 new SqlParameter("P_USUARIO", Types.VARCHAR),
                 new SqlParameter("P_PASSWORD", Types.VARCHAR),
@@ -35,7 +35,7 @@ public class UserRepository {
 
         updCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
-            .withProcedureName("UPD_USUARIO")
+            .withProcedureName("USU_UPD_SP")
             .declareParameters(
                 new SqlParameter("P_USUARIO_ID", Types.NUMERIC),
                 new SqlParameter("P_USUARIO", Types.VARCHAR),
@@ -45,12 +45,14 @@ public class UserRepository {
 
         delCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
-            .withProcedureName("DEL_USUARIO")
-            .declareParameters(new SqlParameter("P_USUARIO_ID", Types.NUMERIC));
+            .withProcedureName("USU_DEL_SP")
+            .declareParameters(
+                new SqlParameter("P_USUARIO_ID", Types.NUMERIC)
+            );
 
         listCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
-            .withProcedureName("LIST_USUARIOS")
+            .withProcedureName("LST_USUARIOS_SP")
             .declareParameters(new SqlOutParameter("P_CURSOR", Types.REF_CURSOR))
             .returningResultSet("P_CURSOR", (rs, rn) -> Map.of(
                 "USUARIO_ID", rs.getLong("USUARIO_ID"),
