@@ -4,9 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Frenchies - Gestión</title>
-
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-
   <style>
     :root{
       --bg:#121212; --panel:#16131f; --ink:#ffffff; --muted:#cfcfe6;
@@ -15,20 +13,16 @@
       --thead:#2b2059; --row:#18132a; --grid:#3b3560; --placeholder:#e3dcff;
     }
     :root{ color-scheme:dark; }
-
     body{ margin:0; padding:0; background:var(--bg); color:var(--ink); font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif }
     *{ color:var(--ink) }
-    ::placeholder{ color:var(--placeholder); opacity:1; }
-    /* fuerza texto blanco al escribir (Chrome/WebKit) */
-    input,select,textarea{ color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important; caret-color:var(--ink); }
+    ::placeholder{ color:var(--placeholder); opacity:1 }
+    input,select,textarea{ color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important; caret-color:var(--ink) }
 
     h1{ font-size:1.8rem; margin-bottom:1rem }
     .sidebar{ position:fixed; top:0; left:0; width:250px; height:100%; background:#1e1e1e; overflow-y:auto; padding-top:1rem }
     .content{ margin-left:250px; padding:2rem }
     .card,.page{ background:var(--panel); border:1px solid #333 }
-    .card h5{ color:var(--ink) }
-
-    .form-control{ background:var(--field); border:1px solid var(--field-border); color:var(--ink) }
+    .form-control{ background:var(--field); border:1px solid var(--field-border) }
     .form-control:focus{ background:var(--field); border-color:var(--purple); box-shadow:0 0 0 .2rem rgba(124,77,255,.25) }
 
     .btn{ color:#fff }
@@ -45,32 +39,29 @@
     .accordion-button,.accordion-button.collapsed{ background:#1e1e1e; color:#fff; border:none }
     .accordion-button::after{ filter:invert(1) }
     .accordion-body{ background:#1e1e1e; padding:0 }
-    .accordion-item{ background:#1e1e1e; border:none }
     .nav-link{ color:#fff; padding:.5rem 1rem; text-decoration:none }
     .nav-link:hover,.nav-link.active{ background:#333 }
     .nav-link.disabled{ opacity:.55; pointer-events:none }
 
     table.table{ color:var(--ink) }
-    table.table thead{ background:var(--thead); color:var(--ink) }
+    table.table thead{ background:var(--thead) }
     table.table tbody tr{ background:var(--row) }
     table.table td, table.table th{ border-color:var(--grid) }
 
     .list-group-item{ background:var(--panel); border-color:#333; color:#fff }
-    .small-muted{ opacity:.85; color:var(--muted) }
     .divider{ height:1px; background:#333; margin:1rem 0 }
     .hint{ font-size:.9rem; color:var(--muted) }
   </style>
 </head>
-
 <body>
   <!-- ===== SIDEBAR ===== -->
   <nav class="sidebar">
     <button class="btn btn-outline-light w-75 mx-auto mb-3" id="btn-login">Login</button>
-
     <div class="accordion" id="sidebarAccordion">
+
       <!-- Roles -->
       <div class="accordion-item">
-        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRoles">Roles</button></h2>
+        <h2 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapseRoles">Roles</button></h2>
         <div id="collapseRoles" class="accordion-collapse collapse" data-bs-parent="#sidebarAccordion">
           <ul class="nav flex-column accordion-body p-0">
             <li><a class="nav-link disabled" data-page="create-role">Crear Rol</a></li>
@@ -83,7 +74,7 @@
 
       <!-- Usuarios -->
       <div class="accordion-item">
-        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUsers">Usuarios</button></h2>
+        <h2 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapseUsers">Usuarios</button></h2>
         <div id="collapseUsers" class="accordion-collapse collapse" data-bs-parent="#sidebarAccordion">
           <ul class="nav flex-column accordion-body p-0">
             <li><a class="nav-link disabled" data-page="create-user">Crear Usuario</a></li>
@@ -96,7 +87,7 @@
 
       <!-- Facturas -->
       <div class="accordion-item">
-        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFacturas">Facturas</button></h2>
+        <h2 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapseFacturas">Facturas</button></h2>
         <div id="collapseFacturas" class="accordion-collapse collapse" data-bs-parent="#sidebarAccordion">
           <ul class="nav flex-column accordion-body p-0">
             <li><a class="nav-link disabled" data-page="create-factura">Crear Factura</a></li>
@@ -110,7 +101,7 @@
 
       <!-- Cierres -->
       <div class="accordion-item">
-        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCierres">Cierres</button></h2>
+        <h2 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapseCierres">Cierres</button></h2>
         <div id="collapseCierres" class="accordion-collapse collapse" data-bs-parent="#sidebarAccordion">
           <ul class="nav flex-column accordion-body p-0">
             <li><a class="nav-link disabled" data-page="create-cierre">Crear Cierre</a></li>
@@ -124,7 +115,7 @@
 
       <!-- Inventario -->
       <div class="accordion-item">
-        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseInv">Inventario</button></h2>
+        <h2 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapseInv">Inventario</button></h2>
         <div id="collapseInv" class="accordion-collapse collapse" data-bs-parent="#sidebarAccordion">
           <ul class="nav flex-column accordion-body p-0">
             <li><a class="nav-link disabled" data-page="create-inv">Crear Inventario</a></li>
@@ -134,6 +125,20 @@
           </ul>
         </div>
       </div>
+
+      <!-- Productos -->
+      <div class="accordion-item">
+        <h2 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapseProd">Productos</button></h2>
+        <div id="collapseProd" class="accordion-collapse collapse" data-bs-parent="#sidebarAccordion">
+          <ul class="nav flex-column accordion-body p-0">
+            <li><a class="nav-link disabled" data-page="create-prod">Crear Producto</a></li>
+            <li><a class="nav-link disabled" data-page="list-prod">Listar Productos</a></li>
+            <li><a class="nav-link disabled" data-page="update-prod">Actualizar Producto</a></li>
+            <li><a class="nav-link disabled" data-page="delete-prod">Eliminar Producto</a></li>
+          </ul>
+        </div>
+      </div>
+
     </div>
   </nav>
 
@@ -231,27 +236,102 @@
     </div></div>
 
     <!-- ===== FACTURAS ===== -->
-    <!-- (Deja aquí tus secciones actuales de facturas y detalle si ya las tienes) -->
+    <div id="create-factura-page" class="page d-none">
+      <div class="card p-4">
+        <h5>Crear Factura (con detalle)</h5>
+        <p class="hint">Elige cajero y agrega líneas (Producto ID, Cantidad, Precio). Puedes añadir varias.</p>
+        <form id="factura-detalle-form" class="mt-3">
+          <label class="mb-1">Usuario/Cajero</label>
+          <select id="factura-usuario-id" class="form-control mb-3" required></select>
+
+          <div class="d-flex align-items-center justify-content-between">
+            <h6 class="m-0">Detalle</h6>
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-add-item">+ Agregar línea</button>
+          </div>
+
+          <div class="table-responsive mt-2">
+            <table class="table table-sm align-middle">
+              <thead><tr><th>Producto ID</th><th>Cantidad</th><th>Precio (₡)</th><th></th></tr></thead>
+              <tbody id="detalle-body"></tbody>
+            </table>
+          </div>
+
+          <div class="divider"></div>
+          <button class="btn btn-primary">Crear Factura con Detalle</button>
+        </form>
+        <div id="factura-result" class="mt-2"></div>
+      </div>
+    </div>
+
+    <div id="list-facturas-page" class="page d-none">
+      <div class="card p-4">
+        <h5>Listado de Facturas</h5>
+        <button id="load-facturas" class="btn btn-secondary mb-3">Cargar Facturas</button>
+        <ul id="facturas-list" class="list-group"></ul>
+      </div>
+    </div>
+
+    <div id="update-factura-page" class="page d-none">
+      <div class="card p-4">
+        <h5>Actualizar Factura</h5>
+        <form id="update-factura-form" class="mt-3">
+          <input type="number" id="update-factura-id" class="form-control mb-3" placeholder="Ej: 11" required />
+          <input type="number" step="0.01" id="update-factura-monto" class="form-control mb-3" placeholder="Ej: 12200.00" required />
+          <button class="btn btn-primary">Actualizar</button>
+        </form>
+        <div id="update-factura-result" class="mt-2"></div>
+      </div>
+    </div>
+
+    <div id="delete-factura-page" class="page d-none">
+      <div class="card p-4">
+        <h5>Eliminar Factura</h5>
+        <form id="delete-factura-form" class="mt-3">
+          <input type="number" id="delete-factura-id" class="form-control mb-3" placeholder="Ej: 11" required />
+          <button class="btn btn-primary">Eliminar Factura</button>
+        </form>
+        <div id="delete-factura-result" class="mt-2"></div>
+      </div>
+    </div>
+
+    <div id="detalle-factura-page" class="page d-none">
+      <div class="card p-4">
+        <h5>Detalle de Factura</h5>
+        <div class="row g-2 align-items-end">
+          <div class="col-auto">
+            <label>Factura ID</label>
+            <input type="number" id="df-factura-id" class="form-control" placeholder="Ej: 11" />
+          </div>
+          <div class="col-auto"><button id="df-cargar" class="btn btn-secondary">Cargar detalle</button></div>
+        </div>
+        <div class="table-responsive mt-3">
+          <table class="table table-sm align-middle"><thead>
+            <tr><th>ID Detalle</th><th>Producto ID</th><th>Nombre</th><th>Cantidad</th><th>Precio (₡)</th><th>Subtotal</th><th></th></tr>
+          </thead><tbody id="df-body"></tbody></table>
+        </div>
+        <div class="divider"></div>
+        <h6>Agregar línea</h6>
+        <form id="df-add-form" class="row g-2">
+          <div class="col-2"><input type="number" id="df-add-prod" class="form-control" placeholder="Ej: 101" required /></div>
+          <div class="col-2"><input type="number" id="df-add-cant" class="form-control" placeholder="Ej: 2" required /></div>
+          <div class="col-2"><input type="number" step="0.01" id="df-add-precio" class="form-control" placeholder="Ej: 5500.00" required /></div>
+          <div class="col-auto"><button class="btn btn-primary">Agregar</button></div>
+        </form>
+        <div id="df-result" class="mt-2"></div>
+      </div>
+    </div>
 
     <!-- ===== CIERRES ===== -->
     <div id="create-cierre-page" class="page d-none"><div class="card p-4">
       <h5>Crear Cierre</h5>
       <form id="cie-create-form" class="row g-3">
-        <div class="col-md-3">
-          <label class="small-muted">Tipo</label>
+        <div class="col-md-3"><label>Tipo</label>
           <select id="cie-tipo" class="form-control" required>
-            <option value="DIARIO">DIARIO</option>
-            <option value="SEMANAL">SEMANAL</option>
-            <option value="MENSUAL">MENSUAL</option>
+            <option value="DIARIO">DIARIO</option><option value="SEMANAL">SEMANAL</option><option value="MENSUAL">MENSUAL</option>
           </select>
         </div>
-        <div class="col-md-3">
-          <label class="small-muted">Fecha</label>
-          <input type="date" id="cie-fecha" class="form-control" required />
-        </div>
-        <div class="col-md-3 d-flex align-items-end">
-          <button class="btn btn-primary">Crear Cierre</button>
-        </div>
+        <div class="col-md-3"><label>Fecha</label><input type="date" id="cie-fecha" class="form-control" required /></div>
+        <div class="col-md-3 d-flex align-items-end"><button class="btn btn-primary">Crear Cierre</button></div>
       </form>
       <div id="cie-create-result" class="mt-3"></div>
     </div></div>
@@ -260,35 +340,22 @@
       <h5>Listado de Cierres</h5>
       <button id="cie-load" class="btn btn-secondary mb-3">Cargar Cierres</button>
       <div class="table-responsive">
-        <table class="table table-sm">
-          <thead><tr><th>ID</th><th>Tipo</th><th>Fecha</th><th>Total (₡)</th></tr></thead>
-          <tbody id="cie-list-body"></tbody>
-        </table>
+        <table class="table table-sm"><thead><tr><th>ID</th><th>Tipo</th><th>Fecha</th><th>Total (₡)</th></tr></thead>
+          <tbody id="cie-list-body"></tbody></table>
       </div>
     </div></div>
 
     <div id="update-cierre-page" class="page d-none"><div class="card p-4">
       <h5>Actualizar Cierre</h5>
       <form id="cie-update-form" class="row g-3">
-        <div class="col-md-2">
-          <label class="small-muted">ID</label>
-          <input type="number" id="cie-upd-id" class="form-control" placeholder="Ej: 1" required />
-        </div>
-        <div class="col-md-3">
-          <label class="small-muted">Tipo</label>
+        <div class="col-md-2"><label>ID</label><input type="number" id="cie-upd-id" class="form-control" placeholder="Ej: 1" required /></div>
+        <div class="col-md-3"><label>Tipo</label>
           <select id="cie-upd-tipo" class="form-control" required>
-            <option value="DIARIO">DIARIO</option>
-            <option value="SEMANAL">SEMANAL</option>
-            <option value="MENSUAL">MENSUAL</option>
+            <option value="DIARIO">DIARIO</option><option value="SEMANAL">SEMANAL</option><option value="MENSUAL">MENSUAL</option>
           </select>
         </div>
-        <div class="col-md-3">
-          <label class="small-muted">Fecha</label>
-          <input type="date" id="cie-upd-fecha" class="form-control" required />
-        </div>
-        <div class="col-md-3 d-flex align-items-end">
-          <button class="btn btn-primary">Actualizar</button>
-        </div>
+        <div class="col-md-3"><label>Fecha</label><input type="date" id="cie-upd-fecha" class="form-control" required /></div>
+        <div class="col-md-3 d-flex align-items-end"><button class="btn btn-primary">Actualizar</button></div>
       </form>
       <div id="cie-update-result" class="mt-3"></div>
     </div></div>
@@ -296,13 +363,8 @@
     <div id="delete-cierre-page" class="page d-none"><div class="card p-4">
       <h5>Eliminar Cierre</h5>
       <form id="cie-delete-form" class="row g-3">
-        <div class="col-md-3">
-          <label class="small-muted">ID</label>
-          <input type="number" id="cie-del-id" class="form-control" placeholder="Ej: 1" required />
-        </div>
-        <div class="col-md-3 d-flex align-items-end">
-          <button class="btn btn-primary">Eliminar</button>
-        </div>
+        <div class="col-md-3"><label>ID</label><input type="number" id="cie-del-id" class="form-control" placeholder="Ej: 1" required /></div>
+        <div class="col-md-3 d-flex align-items-end"><button class="btn btn-primary">Eliminar</button></div>
       </form>
       <div id="cie-delete-result" class="mt-3"></div>
     </div></div>
@@ -310,49 +372,27 @@
     <div id="movimientos-cierre-page" class="page d-none"><div class="card p-4">
       <h5>Movimientos de Caja</h5>
       <div class="row g-2 align-items-end">
-        <div class="col-auto">
-          <label class="small-muted">Cierre ID</label>
-          <input type="number" id="mov-cierre-id" class="form-control" placeholder="Ej: 1" />
-        </div>
-        <div class="col-auto">
-          <button id="mov-load" class="btn btn-secondary">Cargar</button>
-        </div>
-        <div class="col-auto">
-          <span id="mov-total" class="badge bg-primary p-2">Total: ₡0.00</span>
-        </div>
+        <div class="col-auto"><label>Cierre ID</label><input type="number" id="mov-cierre-id" class="form-control" placeholder="Ej: 1" /></div>
+        <div class="col-auto"><button id="mov-load" class="btn btn-secondary">Cargar</button></div>
+        <div class="col-auto"><span id="mov-total" class="badge bg-primary p-2">Total: ₡0.00</span></div>
       </div>
-
       <div class="table-responsive mt-3">
-        <table class="table table-sm align-middle">
-          <thead><tr><th>ID</th><th>Tipo</th><th>Descripción</th><th>Monto (₡)</th><th style="width:150px"></th></tr></thead>
-          <tbody id="mov-body"></tbody>
-        </table>
+        <table class="table table-sm align-middle"><thead><tr><th>ID</th><th>Tipo</th><th>Descripción</th><th>Monto (₡)</th><th></th></tr></thead><tbody id="mov-body"></tbody></table>
       </div>
-
       <div class="divider"></div>
       <h6>Agregar movimiento</h6>
       <form id="mov-add-form" class="row g-2">
         <div class="col-md-2">
-          <select id="mov-add-tipo" class="form-control">
-            <option value="ENTRADA">ENTRADA</option>
-            <option value="SALIDA">SALIDA</option>
-          </select>
+          <select id="mov-add-tipo" class="form-control"><option value="ENTRADA">ENTRADA</option><option value="SALIDA">SALIDA</option></select>
         </div>
-        <div class="col-md-5">
-          <input id="mov-add-desc" class="form-control" placeholder="Ej: Compra insumos / Apertura caja" />
-        </div>
-        <div class="col-md-2">
-          <input type="number" step="0.01" id="mov-add-monto" class="form-control" placeholder="Ej: 15000.00" />
-        </div>
-        <div class="col-md-2">
-          <button class="btn btn-primary">Agregar</button>
-        </div>
+        <div class="col-md-5"><input id="mov-add-desc" class="form-control" placeholder="Ej: Compra insumos / Apertura caja" /></div>
+        <div class="col-md-2"><input type="number" step="0.01" id="mov-add-monto" class="form-control" placeholder="Ej: 15000.00" /></div>
+        <div class="col-md-2"><button class="btn btn-primary">Agregar</button></div>
       </form>
       <div id="mov-result" class="mt-2"></div>
     </div></div>
 
     <!-- ===== INVENTARIO ===== -->
-    <!-- Crear -->
     <div id="create-inv-page" class="page d-none">
       <div class="card p-4">
         <h5>Crear Inventario</h5>
@@ -366,25 +406,19 @@
       </div>
     </div>
 
-    <!-- Listar -->
     <div id="list-inv-page" class="page d-none">
       <div class="card p-4">
         <h5>Listado de Inventario</h5>
         <button id="load-inv" class="btn btn-secondary mb-3">Cargar Inventario</button>
         <div class="table-responsive">
           <table class="table table-sm align-middle">
-            <thead>
-              <tr>
-                <th>ID</th><th>Producto</th><th>Cant. actual</th><th>Stock mín.</th><th>Actualizado</th>
-              </tr>
-            </thead>
+            <thead><tr><th>ID</th><th>Producto</th><th>Cant. actual</th><th>Stock mín.</th><th>Actualizado</th></tr></thead>
             <tbody id="inv-list"></tbody>
           </table>
         </div>
       </div>
     </div>
 
-    <!-- Actualizar -->
     <div id="update-inv-page" class="page d-none">
       <div class="card p-4">
         <h5>Actualizar Inventario</h5>
@@ -398,7 +432,6 @@
       </div>
     </div>
 
-    <!-- Eliminar -->
     <div id="delete-inv-page" class="page d-none">
       <div class="card p-4">
         <h5>Eliminar Inventario</h5>
@@ -410,12 +443,61 @@
       </div>
     </div>
 
-    <!-- ===== DETALLE DE FACTURA ===== -->
-    <!-- Mantén aquí tu sección de “detalle-factura” si ya la tienes en este archivo -->
+    <!-- ===== PRODUCTOS ===== -->
+    <div id="create-prod-page" class="page d-none">
+      <div class="card p-4">
+        <h5>Crear Producto</h5>
+        <form id="prod-form" class="row g-2">
+          <div class="col-md-8"><input id="prod-nombre" class="form-control" placeholder="Ej: Combo clásico" required /></div>
+          <div class="col-md-2"><input type="number" step="0.01" id="prod-precio" class="form-control" placeholder="Ej: 5500" required /></div>
+          <div class="col-md-2"><button class="btn btn-primary w-100">Crear</button></div>
+        </form>
+        <div id="prod-result" class="mt-2"></div>
+      </div>
+    </div>
+
+    <div id="list-prod-page" class="page d-none">
+      <div class="card p-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <h5 class="m-0">Listado de Productos</h5>
+          <button id="load-prod" class="btn btn-secondary">Cargar</button>
+        </div>
+        <div class="table-responsive mt-3">
+          <table class="table table-sm align-middle">
+            <thead><tr><th>ID</th><th>Nombre</th><th>Precio (₡)</th></tr></thead>
+            <tbody id="prod-list"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="update-prod-page" class="page d-none">
+      <div class="card p-4">
+        <h5>Actualizar Producto</h5>
+        <form id="prod-upd-form" class="row g-2">
+          <div class="col-md-2"><input type="number" id="prod-upd-id" class="form-control" placeholder="ID" required /></div>
+          <div class="col-md-6"><input id="prod-upd-nombre" class="form-control" placeholder="Nuevo nombre" required /></div>
+          <div class="col-md-2"><input type="number" step="0.01" id="prod-upd-precio" class="form-control" placeholder="Nuevo precio" required /></div>
+          <div class="col-md-2"><button class="btn btn-primary w-100">Actualizar</button></div>
+        </form>
+        <div id="prod-upd-result" class="mt-2"></div>
+      </div>
+    </div>
+
+    <div id="delete-prod-page" class="page d-none">
+      <div class="card p-4">
+        <h5>Eliminar Producto</h5>
+        <form id="prod-del-form" class="row g-2">
+          <div class="col-md-3"><input type="number" id="prod-del-id" class="form-control" placeholder="ID" required /></div>
+          <div class="col-md-2"><button class="btn btn-primary w-100">Eliminar</button></div>
+        </form>
+        <div id="prod-del-result" class="mt-2"></div>
+      </div>
+    </div>
+
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
   <script>
     const qs = id => document.getElementById(id);
     const clear = el => (el.innerHTML = '');
@@ -426,10 +508,12 @@
     document.getElementById('btn-login').onclick = () => showPage('login');
     document.querySelectorAll('.nav-link').forEach(a=>{
       a.onclick = e => { e.preventDefault(); if(a.classList.contains('disabled')) return;
-        document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active')); a.classList.add('active'); showPage(a.dataset.page);
+        document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));
+        a.classList.add('active'); showPage(a.dataset.page);
       };
     });
 
+    // ===== util selects
     async function loadRolesIntoSelect(id){
       const sel=qs(id); if(!sel) return; clear(sel); sel.innerHTML='<option value="">-- Rol (Ej: 1) --</option>';
       const r=await fetch('/roles'); if(!r.ok) return;
@@ -439,6 +523,17 @@
       const sel=qs(id); if(!sel) return; clear(sel); sel.innerHTML='<option value="">-- Usuario (Ej: 21) --</option>';
       const r=await fetch('/usuarios'); if(!r.ok) return;
       (await r.json()).forEach(u=>{ const opt=document.createElement('option'); opt.value=u.USUARIO_ID; opt.textContent=`${u.USUARIO_ID} — ${u.USUARIO}`; sel.appendChild(opt); });
+    }
+    async function loadProductosIntoSelect(id) {
+      const sel = qs(id); if(!sel) return;
+      sel.innerHTML = '<option value="">-- Producto (Ej: 101) --</option>';
+      const r = await fetch('/inventario/productos'); if(!r.ok) return;
+      (await r.json()).forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.PRODUCTO_ID;
+        opt.textContent = `${p.PRODUCTO_ID} — ${p.NOMBRE ?? ''}`;
+        sel.appendChild(opt);
+      });
     }
 
     // ===== Login
@@ -487,26 +582,151 @@
       const r=await fetch('/usuarios/'+id,{method:'DELETE'}); const div=qs('delete-user-result'); clear(div); r.status===204?msgOK(div,'Eliminado'):msgErr(div,'Error');
     };
 
+    // ===== Facturas
+    const detalleBody = qs('detalle-body');
+    function addItemRow(prod='', cant='', precio=''){
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input type="number" class="form-control form-control-sm prod" placeholder="Ej: 101" value="${prod}"></td>
+        <td><input type="number" class="form-control form-control-sm cant" placeholder="Ej: 2" value="${cant}"></td>
+        <td><input type="number" step="0.01" class="form-control form-control-sm precio" placeholder="Ej: 5500.00" value="${precio}"></td>
+        <td class="text-end"><button type="button" class="btn btn-secondary btn-sm btn-del">−</button></td>`;
+      tr.querySelector('.btn-del').onclick = () => tr.remove();
+      detalleBody.appendChild(tr);
+    }
+    qs('btn-add-item')?.addEventListener('click', () => addItemRow());
+
+    qs('factura-detalle-form')?.addEventListener('submit', async e => {
+      e.preventDefault();
+      const usuarioId = parseInt(qs('factura-usuario-id').value);
+      const items = [...detalleBody.querySelectorAll('tr')].map(tr => ({
+        productoId: Number(tr.querySelector('.prod').value),
+        cantidad:   Number(tr.querySelector('.cant').value),
+        precio:     Number(tr.querySelector('.precio').value)
+      })).filter(it => it.productoId && it.cantidad && it.precio >= 0);
+      const div = qs('factura-result'); clear(div);
+      if (!usuarioId || items.length === 0){ msgErr(div, 'Usuario y al menos una línea son obligatorios'); return; }
+      const r = await fetch('/facturas/con-detalle', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ usuarioId, items }) });
+      if (!r.ok){ msgErr(div, 'Error al crear factura'); return; }
+      const data = await r.json(); msgOK(div, 'Factura creada: ' + data.factura_id);
+      detalleBody.innerHTML = ''; addItemRow();
+    });
+
+    qs('load-facturas')?.addEventListener('click', async () => {
+      const list = qs('facturas-list'); clear(list);
+      const r = await fetch('/facturas');
+      if (r.ok) {
+        (await r.json()).forEach(f => {
+          const li = document.createElement('li');
+          li.className = 'list-group-item';
+          li.innerHTML = `ID ${f.FACTURA_ID}: ₡${f.MONTO_TOTAL} (Usr ${f.USUARIO_ID}) <div class="hint">Para editar líneas, usa "Detalle de Factura".</div>`;
+          list.appendChild(li);
+        });
+      } else msgErr(list, 'Error');
+    });
+
+    qs('update-factura-form')?.addEventListener('submit', async e => {
+      e.preventDefault();
+      const id = qs('update-factura-id').value;
+      const montoTotal = parseFloat(qs('update-factura-monto').value);
+      const r = await fetch('/facturas/' + id, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ montoTotal }) });
+      const div = qs('update-factura-result'); clear(div);
+      r.status === 204 ? msgOK(div, 'Actualizado') : msgErr(div, 'Error');
+    });
+
+    qs('delete-factura-form')?.addEventListener('submit', async e => {
+      e.preventDefault();
+      const id = qs('delete-factura-id').value;
+      const r = await fetch('/facturas/' + id, { method:'DELETE' });
+      const div = qs('delete-factura-result'); clear(div);
+      r.status === 204 ? msgOK(div, 'Eliminado') : msgErr(div, 'Error');
+    });
+
+    async function loadDetalle(){
+      const facturaId = parseInt(qs('df-factura-id').value);
+      const tbody = qs('df-body'); clear(tbody);
+      if (!facturaId) return;
+      const r = await fetch('/api/detalle-factura/' + facturaId);
+      if (!r.ok){ msgErr(qs('df-result'), 'No se pudo cargar el detalle'); return; }
+      const data = await r.json();
+      data.forEach(row => {
+        const tr = document.createElement('tr'); tr.dataset.id = row.ID_DETALLE;
+        tr.innerHTML = `
+          <td>${row.ID_DETALLE}</td>
+          <td>${row.PRODUCTO_ID}</td>
+          <td>${row.NOMBRE ?? '-'}</td>
+          <td><span class="v-cant">${row.CANTIDAD}</span></td>
+          <td><span class="v-precio">${row.PRECIO_UNITARIO}</span></td>
+          <td>${row.SUBTOTAL}</td>
+          <td class="text-end">
+            <button class="btn btn-secondary btn-sm btn-edit">Editar</button>
+            <button class="btn btn-primary btn-sm btn-save d-none">Guardar</button>
+            <button class="btn btn-secondary btn-sm btn-cancel d-none">Cancelar</button>
+            <button class="btn btn-danger btn-sm btn-del">Eliminar</button>
+          </td>`;
+        const btnEdit = tr.querySelector('.btn-edit'), btnSave = tr.querySelector('.btn-save'),
+              btnCancel = tr.querySelector('.btn-cancel'), btnDel = tr.querySelector('.btn-del');
+
+        const toEdit = () => {
+          const c = tr.querySelector('.v-cant').textContent;
+          const p = tr.querySelector('.v-precio').textContent;
+          tr.children[3].innerHTML = `<input type="number" class="form-control form-control-sm e-cant" value="${c}">`;
+          tr.children[4].innerHTML = `<input type="number" step="0.01" class="form-control form-control-sm e-precio" value="${p}">`;
+          btnEdit.classList.add('d-none'); btnSave.classList.remove('d-none'); btnCancel.classList.remove('d-none');
+        };
+        const toView = (c,p) => {
+          tr.children[3].innerHTML = `<span class="v-cant">${c}</span>`;
+          tr.children[4].innerHTML = `<span class="v-precio">${p}</span>`;
+          btnEdit.classList.remove('d-none'); btnSave.classList.add('d-none'); btnCancel.classList.add('d-none');
+        };
+
+        btnEdit.onclick = () => toEdit();
+        btnCancel.onclick = () => toView(tr.querySelector('.e-cant')?.value ?? tr.querySelector('.v-cant').textContent,
+                                         tr.querySelector('.e-precio')?.value ?? tr.querySelector('.v-precio').textContent);
+        btnSave.onclick = async () => {
+          const cant = Number(tr.querySelector('.e-cant').value), prec = Number(tr.querySelector('.e-precio').value);
+          const rr = await fetch('/api/detalle-factura/linea/' + tr.dataset.id, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ cantidad:cant, precio:prec }) });
+          if(!rr.ok){ msgErr(qs('df-result'),'Error al guardar'); return; }
+          msgOK(qs('df-result'),'Línea actualizada'); await loadDetalle();
+        };
+        btnDel.onclick = async () => {
+          const rr = await fetch('/api/detalle-factura/linea/' + tr.dataset.id, { method:'DELETE' });
+          if(!rr.ok){ msgErr(qs('df-result'),'Error al eliminar'); return; }
+          msgOK(qs('df-result'),'Línea eliminada'); await loadDetalle();
+        };
+
+        tbody.appendChild(tr);
+      });
+    }
+    qs('df-cargar')?.addEventListener('click', async (e)=>{ e.preventDefault(); clear(qs('df-result')); await loadDetalle(); });
+    qs('df-add-form')?.addEventListener('submit', async e => {
+      e.preventDefault(); clear(qs('df-result'));
+      const facturaId = parseInt(qs('df-factura-id').value);
+      const productoId = parseInt(qs('df-add-prod').value);
+      const cantidad   = parseInt(qs('df-add-cant').value);
+      const precio     = parseFloat(qs('df-add-precio').value);
+      if(!facturaId || !productoId || !cantidad || precio<0){ msgErr(qs('df-result'),'Datos incompletos'); return; }
+      const p = new URLSearchParams({ productoId, cantidad, precio });
+      const r = await fetch('/api/detalle-factura/' + facturaId, { method:'POST', body:p });
+      if(!r.ok){ msgErr(qs('df-result'),'Error al agregar'); return; }
+      msgOK(qs('df-result'),'Línea agregada'); e.target.reset(); await loadDetalle();
+    });
+
     // ===== Cierres
     qs('cie-create-form').onsubmit = async e => {
       e.preventDefault();
-      const tipo = qs('cie-tipo').value;
-      const fecha = qs('cie-fecha').value;
+      const tipo = qs('cie-tipo').value, fecha = qs('cie-fecha').value;
       const r = await fetch('/cierres',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tipo,fecha})});
       const div=qs('cie-create-result'); clear(div);
       if(!r.ok){ msgErr(div,'Error al crear cierre'); return; }
       const data=await r.json(); msgOK(div,'Cierre creado: ' + data.cierre_id);
     };
-
     qs('cie-load').onclick = async () => {
       const body = qs('cie-list-body'); clear(body);
       const r = await fetch('/cierres'); if(!r.ok){ body.innerHTML='<tr><td colspan="4">Error</td></tr>'; return; }
       const rows = await r.json();
       for (const c of rows){
-        let total=''; try{
-          const t = await fetch('/cierres/'+c.ID_CIERRE+'/total');
-          if(t.ok){ total = (await t.json()).total; }
-        }catch(_){}
+        let total=''; try{ const t = await fetch('/cierres/'+c.ID_CIERRE+'/total'); if(t.ok){ total = (await t.json()).total; } }catch(_){}
         const tr = document.createElement('tr');
         tr.innerHTML = `<td>${c.ID_CIERRE??''}</td><td>${c.TIPO??''}</td>
                         <td>${(c.FECHA_CIERRE? new Date(c.FECHA_CIERRE).toLocaleDateString(): '')}</td>
@@ -514,39 +734,27 @@
         body.appendChild(tr);
       }
     };
-
     qs('cie-update-form').onsubmit = async e => {
       e.preventDefault();
       const id=qs('cie-upd-id').value, tipo=qs('cie-upd-tipo').value, fecha=qs('cie-upd-fecha').value;
       const r=await fetch('/cierres/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({tipo,fecha})});
       const div=qs('cie-update-result'); clear(div); r.status===204?msgOK(div,'Actualizado'):msgErr(div,'Error');
     };
-
     qs('cie-delete-form').onsubmit = async e => {
       e.preventDefault();
       const id=qs('cie-del-id').value;
       const r=await fetch('/cierres/'+id,{method:'DELETE'});
       const div=qs('cie-delete-result'); clear(div); r.status===204?msgOK(div,'Eliminado'):msgErr(div,'Error');
     };
-
-    // ===== Movimientos de Caja
     async function refreshMovTable(){
       const cierreId = parseInt(qs('mov-cierre-id').value); if(!cierreId) return;
       const body = qs('mov-body'); clear(body); clear(qs('mov-result'));
-
       const r = await fetch('/cierres/'+cierreId+'/movimientos');
       if(!r.ok){ msgErr(qs('mov-result'),'Error al cargar movimientos'); return; }
       (await r.json()).forEach(m=>{
-        const tr=document.createElement('tr');
-        tr.dataset.id = m.ID_MOVIMIENTO;
-        tr.innerHTML = `
-          <td>${m.ID_MOVIMIENTO}</td>
-          <td>${m.TIPO}</td>
-          <td>${m.DESCRIPCION??''}</td>
-          <td>${m.MONTO??''}</td>
-          <td class="text-end">
-            <button class="btn btn-danger btn-sm btn-del">Eliminar</button>
-          </td>`;
+        const tr=document.createElement('tr'); tr.dataset.id = m.ID_MOVIMIENTO;
+        tr.innerHTML = `<td>${m.ID_MOVIMIENTO}</td><td>${m.TIPO}</td><td>${m.DESCRIPCION??''}</td><td>${m.MONTO??''}</td>
+                        <td class="text-end"><button class="btn btn-danger btn-sm btn-del">Eliminar</button></td>`;
         tr.querySelector('.btn-del').onclick = async () => {
           const rr = await fetch('/movimientos/'+tr.dataset.id,{method:'DELETE'});
           if(!rr.ok){ msgErr(qs('mov-result'),'No se pudo eliminar'); return; }
@@ -570,87 +778,86 @@
       if(!id || !tipo || isNaN(monto)){ msgErr(qs('mov-result'),'Datos incompletos'); return; }
       const r = await fetch('/cierres/'+id+'/movimientos',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tipo,descripcion,monto})});
       if(!r.ok){ msgErr(qs('mov-result'),'Error al agregar'); return; }
-      msgOK(qs('mov-result'),'Movimiento agregado');
-      e.target.reset();
+      msgOK(qs('mov-result'),'Movimiento agregado'); e.target.reset();
       await refreshMovTable(); await refreshTotal();
     };
 
-    // ===== INVENTARIO
-    async function loadProductosIntoSelect(id) {
-      const sel = document.getElementById(id); if(!sel) return;
-      sel.innerHTML = '<option value="">-- Producto (Ej: 101) --</option>';
-      const r = await fetch('/inventario/productos'); if(!r.ok) return;
-      (await r.json()).forEach(p => {
-        const opt = document.createElement('option');
-        opt.value = p.PRODUCTO_ID;
-        opt.textContent = `${p.PRODUCTO_ID} — ${p.NOMBRE ?? ''}`;
-        sel.appendChild(opt);
-      });
-    }
-
-    // Crear inventario
-    document.getElementById('inv-form')?.addEventListener('submit', async e => {
+    // ===== Inventario
+    document.querySelectorAll('[data-page="create-inv"]').forEach(a => { a.addEventListener('click', () => loadProductosIntoSelect('inv-prod')); });
+    qs('inv-form')?.addEventListener('submit', async e => {
       e.preventDefault();
-      const productoId = parseInt(document.getElementById('inv-prod').value);
-      const cantidad   = parseFloat(document.getElementById('inv-cant').value);
-      const stockMin   = parseFloat(document.getElementById('inv-min').value);
-      const div = document.getElementById('inv-result'); div.innerHTML = '';
-      const r = await fetch('/inventario', {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ productoId, cantidad, stockMinimo: stockMin })
-      });
+      const productoId = parseInt(qs('inv-prod').value);
+      const cantidad   = parseFloat(qs('inv-cant').value);
+      const stockMin   = parseFloat(qs('inv-min').value);
+      const div = qs('inv-result'); clear(div);
+      const r = await fetch('/inventario', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ productoId, cantidad, stockMinimo: stockMin }) });
       r.ok ? msgOK(div,'Inventario creado') : msgErr(div,'Error al crear');
       if (r.ok) e.target.reset();
     });
-
-    // Listar inventario
-    document.getElementById('load-inv')?.addEventListener('click', async () => {
-      const tbody = document.getElementById('inv-list'); tbody.innerHTML = '';
+    qs('load-inv')?.addEventListener('click', async () => {
+      const tbody = qs('inv-list'); clear(tbody);
       const r = await fetch('/inventario');
       if (!r.ok) { tbody.innerHTML = '<tr><td colspan="5">Error</td></tr>'; return; }
       (await r.json()).forEach(row => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${row.ID_INVENTARIO ?? ''}</td>
-          <td>${(row.PRODUCTO_ID ?? '') + (row.NOMBRE ? ' — ' + row.NOMBRE : '')}</td>
-          <td>${row.CANTIDAD_ACTUAL ?? ''}</td>
-          <td>${row.STOCK_MINIMO ?? ''}</td>
-          <td>${row.FECHA_ACTUALIZACION ?? ''}</td>
-        `;
+        tr.innerHTML = `<td>${row.ID_INVENTARIO ?? ''}</td>
+                        <td>${(row.PRODUCTO_ID ?? '') + (row.NOMBRE ? ' — ' + row.NOMBRE : '')}</td>
+                        <td>${row.CANTIDAD_ACTUAL ?? ''}</td>
+                        <td>${row.STOCK_MINIMO ?? ''}</td>
+                        <td>${row.FECHA_ACTUALIZACION ?? ''}</td>`;
         tbody.appendChild(tr);
       });
     });
-
-    // Actualizar inventario
-    document.getElementById('inv-upd-form')?.addEventListener('submit', async e => {
+    qs('inv-upd-form')?.addEventListener('submit', async e => {
       e.preventDefault();
-      const id     = parseInt(document.getElementById('inv-upd-id').value);
-      const cant   = parseFloat(document.getElementById('inv-upd-cant').value);
-      const minimo = parseFloat(document.getElementById('inv-upd-min').value);
-      const div = document.getElementById('inv-upd-result'); div.innerHTML='';
-      const r = await fetch('/inventario/' + id, {
-        method:'PUT', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ cantidad: cant, stockMinimo: minimo })
-      });
-      div.innerHTML = (r.status === 204)
-        ? '<div class="alert alert-success">Actualizado</div>'
-        : '<div class="alert alert-danger">Error</div>';
+      const id = parseInt(qs('inv-upd-id').value), cant = parseFloat(qs('inv-upd-cant').value), minimo = parseFloat(qs('inv-upd-min').value);
+      const div = qs('inv-upd-result'); clear(div);
+      const r = await fetch('/inventario/' + id, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ cantidad: cant, stockMinimo: minimo }) });
+      div.innerHTML = (r.status === 204) ? '<div class="alert alert-success">Actualizado</div>' : '<div class="alert alert-danger">Error</div>';
     });
-
-    // Eliminar inventario
-    document.getElementById('inv-del-form')?.addEventListener('submit', async e => {
+    qs('inv-del-form')?.addEventListener('submit', async e => {
       e.preventDefault();
-      const id  = parseInt(document.getElementById('inv-del-id').value);
-      const div = document.getElementById('inv-del-result'); div.innerHTML='';
+      const id  = parseInt(qs('inv-del-id').value);
+      const div = qs('inv-del-result'); clear(div);
       const r = await fetch('/inventario/' + id, { method:'DELETE' });
-      div.innerHTML = (r.status === 204)
-        ? '<div class="alert alert-success">Eliminado</div>'
-        : '<div class="alert alert-danger">Error</div>';
+      div.innerHTML = (r.status === 204) ? '<div class="alert alert-success">Eliminado</div>' : '<div class="alert alert-danger">Error</div>';
     });
 
-    // Al abrir "Crear Inventario", llenar combo de productos
-    document.querySelectorAll('[data-page="create-inv"]').forEach(a => {
-      a.addEventListener('click', () => loadProductosIntoSelect('inv-prod'));
+    // ===== Productos
+    qs('prod-form')?.addEventListener('submit', async e => {
+      e.preventDefault();
+      const nombre = qs('prod-nombre').value.trim();
+      const precio = parseFloat(qs('prod-precio').value);
+      const div = qs('prod-result'); clear(div);
+      const r = await fetch('/productos', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ nombre, precio }) });
+      r.ok ? msgOK(div,'Producto creado') : msgErr(div,'Error al crear');
+      if (r.ok) e.target.reset();
+    });
+    qs('load-prod')?.addEventListener('click', async () => {
+      const tbody = qs('prod-list'); clear(tbody);
+      const r = await fetch('/productos');
+      if (!r.ok) { tbody.innerHTML = '<tr><td colspan="3">Error</td></tr>'; return; }
+      (await r.json()).forEach(p => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${p.PRODUCTO_ID}</td><td>${p.NOMBRE ?? ''}</td><td>${p.PRECIO ?? ''}</td>`;
+        tbody.appendChild(tr);
+      });
+    });
+    qs('prod-upd-form')?.addEventListener('submit', async e => {
+      e.preventDefault();
+      const id = parseInt(qs('prod-upd-id').value);
+      const nombre = qs('prod-upd-nombre').value.trim();
+      const precio = parseFloat(qs('prod-upd-precio').value);
+      const div = qs('prod-upd-result'); clear(div);
+      const r = await fetch('/productos/'+id, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ nombre, precio }) });
+      div.innerHTML = (r.status === 204) ? '<div class="alert alert-success">Actualizado</div>' : '<div class="alert alert-danger">Error</div>';
+    });
+    qs('prod-del-form')?.addEventListener('submit', async e => {
+      e.preventDefault();
+      const id = parseInt(qs('prod-del-id').value);
+      const div = qs('prod-del-result'); clear(div);
+      const r = await fetch('/productos/'+id, { method:'DELETE' });
+      div.innerHTML = (r.status === 204) ? '<div class="alert alert-success">Eliminado</div>' : '<div class="alert alert-danger">Error</div>';
     });
 
     // ===== init
@@ -658,7 +865,9 @@
       document.querySelectorAll('.nav-link').forEach(n=>n.classList.add('disabled'));
       loadRolesIntoSelect('user-rol-id');
       loadRolesIntoSelect('update-user-rol-id');
-      loadUsersIntoSelect('factura-usuario-id'); // si tu sección de facturas la usa
+      loadUsersIntoSelect('factura-usuario-id');
+      // una fila lista para detalle factura
+      const el = document.getElementById('detalle-body'); if(el && el.children.length===0){ addItemRow(); }
       showPage('login');
     })();
   </script>
