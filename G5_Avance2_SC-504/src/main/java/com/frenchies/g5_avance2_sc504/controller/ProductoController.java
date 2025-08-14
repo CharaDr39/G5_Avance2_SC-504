@@ -2,6 +2,8 @@ package com.frenchies.g5_avance2_sc504.controller;
 
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,12 +19,24 @@ public class ProductoController {
         this.svc = svc;
     }
 
+    private static Number num(Object o) { return (o instanceof Number) ? (Number) o : null; }
+
     @PostMapping
-    public ResponseEntity<Map<String,Object>> crear(@RequestBody Map<String,Object> b) {
-        String nombre = String.valueOf(b.get("nombre"));
-        Number precio = (Number) b.get("precio");
-        long id = svc.crear(nombre, precio);
-        return ResponseEntity.ok(Map.of("producto_id", id));
+    public ResponseEntity<?> crear(@RequestBody Map<String,Object> b) {
+        try {
+            String nombre     = String.valueOf(b.get("nombre"));
+            Number precio     = num(b.get("precio"));
+            Number stockAct   = num(b.get("stockActual"));   // opcional, default 0
+            Number ptoReorden = num(b.get("puntoReorden"));  // opcional, default 0
+            long id = svc.crear(nombre, precio, stockAct, ptoReorden);
+            return ResponseEntity.ok(Map.of("producto_id", id));
+        } catch (DataAccessException ex) {
+            // Mensaje de Oracle al cliente (útil en desarrollo)
+            return ResponseEntity.badRequest().body(Map.of(
+                "error", "No se pudo crear el producto",
+                "detalle", ex.getMostSpecificCause() != null ? ex.getMostSpecificCause().getMessage() : ex.getMessage()
+            ));
+        }
     }
 
     @GetMapping
@@ -31,16 +45,34 @@ public class ProductoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> actualizar(@PathVariable long id, @RequestBody Map<String,Object> b) {
-        String nombre = String.valueOf(b.get("nombre"));
-        Number precio = (Number) b.get("precio");
-        svc.actualizar(id, nombre, precio);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> actualizar(@PathVariable long id, @RequestBody Map<String,Object> b) {
+        try {
+            String nombre     = String.valueOf(b.get("nombre"));
+            Number precio     = num(b.get("precio"));
+            Number stockAct   = num(b.get("stockActual"));   // opcional
+            Number ptoReorden = num(b.get("puntoReorden"));  // opcional
+            svc.actualizar(id, nombre, precio, stockAct, ptoReorden);
+            return ResponseEntity.noContent().build();
+        } catch (DataAccessException ex) {
+            return ResponseEntity.badRequest().body(Map.of(
+                "error", "No se pudo actualizar el producto",
+                "detalle", ex.getMostSpecificCause() != null ? ex.getMostSpecificCause().getMessage() : ex.getMessage()
+            ));
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable long id) {
-        svc.eliminar(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> eliminar(@PathVariable long id) {
+        try {
+            svc.eliminar(id);
+            return ResponseEntity.noContent().build();
+        } catch (DataAccessException ex) {
+            // Caso típico: ORA-20024 Producto con movimientos -> 409 Conflict
+            String detalle = ex.getMostSpecificCause() != null ? ex.getMostSpecificCause().getMessage() : ex.getMessage();
+            return ResponseEntity.status(409).body(Map.of(
+                "error", "No se puede eliminar el producto (tiene movimientos o referencias).",
+                "detalle", detalle
+            ));
+        }
     }
 }
