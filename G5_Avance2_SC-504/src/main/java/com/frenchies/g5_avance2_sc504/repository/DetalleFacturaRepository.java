@@ -32,40 +32,38 @@ public class DetalleFacturaRepository {
                 new SqlOutParameter("P_CURSOR", Types.REF_CURSOR)
             )
             .returningResultSet("P_CURSOR", (rs, rn) -> Map.of(
-                // acepta ID_DETALLE o DETALLE_ID, etc.
                 "DETALLE_ID",  getLong(rs, "DETALLE_ID", "ID_DETALLE"),
                 "FACTURA_ID",  getLong(rs, "FACTURA_ID", "ID_FACTURA"),
                 "PRODUCTO_ID", getLong(rs, "PRODUCTO_ID", "ID_PRODUCTO"),
                 "NOMBRE",      getString(rs, "NOMBRE", "PRODUCTO"),
                 "CANTIDAD",    getLong(rs, "CANTIDAD"),
-                // tolera PRECIO o PRECIO_UNITARIO
-                "PRECIO",      getDouble(rs, "PRECIO", "PRECIO_UNITARIO"),
+                "PRECIO_UNITARIO", getDouble(rs, "PRECIO_UNITARIO", "PRECIO"),
                 "SUBTOTAL",    getDouble(rs, "SUBTOTAL")
             ));
 
-        // INSERTAR LÍNEA  (usa P_PRECIO_UNITARIO como en el SP)
+        // INSERTAR LÍNEA
         insCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
             .withProcedureName("DET_INS_SP")
             .declareParameters(
-                new SqlParameter("P_FACTURA_ID",      Types.NUMERIC),
-                new SqlParameter("P_PRODUCTO_ID",     Types.NUMERIC),
-                new SqlParameter("P_CANTIDAD",        Types.NUMERIC),
-                new SqlParameter("P_PRECIO_UNITARIO", Types.NUMERIC),
-                new SqlOutParameter("P_OUT_ID",       Types.NUMERIC)
+                new SqlParameter("P_FACTURA_ID",  Types.NUMERIC),
+                new SqlParameter("P_PRODUCTO_ID", Types.NUMERIC),
+                new SqlParameter("P_CANTIDAD",    Types.NUMERIC),
+                new SqlParameter("P_PRECIO",      Types.NUMERIC),
+                new SqlOutParameter("P_OUT_ID",   Types.NUMERIC)
             );
 
-        // ACTUALIZAR LÍNEA  (también P_PRECIO_UNITARIO)
+        // ACTUALIZAR LÍNEA  -> el SP usa P_ID (no P_DETALLE_ID)
         updCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
             .withProcedureName("DET_UPD_SP")
             .declareParameters(
-                new SqlParameter("P_DETALLE_ID",      Types.NUMERIC),
-                new SqlParameter("P_CANTIDAD",        Types.NUMERIC),
-                new SqlParameter("P_PRECIO_UNITARIO", Types.NUMERIC)
+                new SqlParameter("P_ID",               Types.NUMERIC),
+                new SqlParameter("P_CANTIDAD",         Types.NUMERIC),
+                new SqlParameter("P_PRECIO_UNITARIO",  Types.NUMERIC)
             );
 
-        // ELIMINAR LÍNEA
+        // ELIMINAR LÍNEA (si tu SP usa P_ID cámbialo aquí también)
         delCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
             .withProcedureName("DET_DEL_SP")
@@ -81,21 +79,21 @@ public class DetalleFacturaRepository {
         ).get("P_CURSOR");
     }
 
-    public long insertLinea(long facturaId, long productoId, long cantidad, double precioUnitario) {
+    public long insertLinea(long facturaId, long productoId, long cantidad, double precio) {
         var out = insCall.execute(Map.of(
-            "P_FACTURA_ID",      facturaId,
-            "P_PRODUCTO_ID",     productoId,
-            "P_CANTIDAD",        cantidad,
-            "P_PRECIO_UNITARIO", precioUnitario
+            "P_FACTURA_ID",  facturaId,
+            "P_PRODUCTO_ID", productoId,
+            "P_CANTIDAD",    cantidad,
+            "P_PRECIO",      precio
         ));
         return ((Number) out.get("P_OUT_ID")).longValue();
     }
 
     public void updateLinea(long detalleId, long cantidad, double precioUnitario) {
         updCall.execute(Map.of(
-            "P_DETALLE_ID",      detalleId,
-            "P_CANTIDAD",        cantidad,
-            "P_PRECIO_UNITARIO", precioUnitario
+            "P_ID",               detalleId,     // <- clave correcta
+            "P_CANTIDAD",         cantidad,
+            "P_PRECIO_UNITARIO",  precioUnitario
         ));
     }
 
@@ -123,6 +121,6 @@ public class DetalleFacturaRepository {
             try { String v = rs.getString(n); if (v != null) return v; }
             catch (SQLException ignore) {}
         }
-        return null;
+        return "";
     }
 }
