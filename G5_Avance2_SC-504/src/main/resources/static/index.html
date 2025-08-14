@@ -319,15 +319,17 @@
         </div>
         <div class="table-responsive mt-3">
           <table class="table table-sm align-middle"><thead>
-            <tr><th>ID Detalle</th><th>Producto ID</th><th>Nombre</th><th>Cantidad</th><th>Precio (₡)</th><th>Subtotal</th><th></th></tr>
+            <!-- Quitamos Precio (₡); mantenemos Subtotal -->
+            <tr><th>ID Detalle</th><th>Producto ID</th><th>Nombre</th><th>Cantidad</th><th>Subtotal</th><th></th></tr>
           </thead><tbody id="df-body"></tbody></table>
         </div>
         <div class="divider"></div>
-        <h6>Agregar línea</h6>
-        <form id="df-add-form" class="row g-2">
-          <div class="col-2"><input type="number" id="df-add-prod" class="form-control" placeholder="Ej: 101" required /></div>
-          <div class="col-2"><input type="number" id="df-add-cant" class="form-control" placeholder="Ej: 2" required /></div>
-          <div class="col-2"><input type="number" step="0.01" id="df-add-precio" class="form-control" placeholder="Ej: 5500.00" required /></div>
+        <!-- Oculto: ya no se permite agregar líneas desde aquí -->
+        <h6 class="d-none">Agregar línea</h6>
+        <form id="df-add-form" class="row g-2 d-none">
+          <div class="col-2"><input type="number" id="df-add-prod" class="form-control" placeholder="Ej: 101" /></div>
+          <div class="col-2"><input type="number" id="df-add-cant" class="form-control" placeholder="Ej: 2" /></div>
+          <div class="col-2"><input type="number" step="0.01" id="df-add-precio" class="form-control" placeholder="Ej: 5500.00" /></div>
           <div class="col-auto"><button class="btn btn-primary">Agregar</button></div>
         </form>
         <div id="df-result" class="mt-2"></div>
@@ -755,76 +757,71 @@
       r.status === 204 ? msgOK(div, 'Eliminado') : msgErr(div, 'Error');
     });
 
+    // ===== Detalle de Factura (solo Cantidad; sin Precio en UI)
     async function loadDetalle(){
       const facturaId = parseInt(qs('df-factura-id').value);
-      const tbody = qs('df-body'); clear(tbody);
+      const tbody = qs('df-body'); clear(tbody); clear(qs('df-result'));
       if (!facturaId) return;
+
       const r = await fetch('/api/detalle-factura/' + facturaId);
       if (!r.ok){ msgErr(qs('df-result'), 'No se pudo cargar el detalle'); return; }
       const data = await r.json();
+
       data.forEach(row => {
-        const tr = document.createElement('tr'); tr.dataset.id = row.ID_DETALLE;
+        const idDet = row.ID_DETALLE ?? row.DETALLE_ID ?? row.detalle_id ?? row.ID ?? null;
+        const prodId = row.PRODUCTO_ID ?? row.ID_PRODUCTO ?? '';
+        const nombre = row.NOMBRE ?? '-';
+        const cantidad = Number(row.CANTIDAD ?? 0);
+        const subtotal = Number(row.SUBTOTAL ?? 0);
+        const precioUnit = (row.PRECIO_UNITARIO ?? row.PRECIO ?? (cantidad>0 ? subtotal/cantidad : 0));
+
+        const tr = document.createElement('tr');
+        tr.dataset.id = idDet;
+        tr.dataset.precio = precioUnit; // lo conservamos para el PUT
         tr.innerHTML = `
-          <td>${row.ID_DETALLE}</td>
-          <td>${row.PRODUCTO_ID}</td>
-          <td>${row.NOMBRE ?? '-'}</td>
-          <td><span class="v-cant">${row.CANTIDAD}</span></td>
-          <td><span class="v-precio">${row.PRECIO_UNITARIO}</span></td>
-          <td>${row.SUBTOTAL}</td>
+          <td>${idDet ?? ''}</td>
+          <td>${prodId}</td>
+          <td>${nombre}</td>
+          <td><span class="v-cant">${cantidad}</span></td>
+          <td>${subtotal}</td>
           <td class="text-end">
             <button class="btn btn-secondary btn-sm btn-edit">Editar</button>
             <button class="btn btn-primary btn-sm btn-save d-none">Guardar</button>
             <button class="btn btn-secondary btn-sm btn-cancel d-none">Cancelar</button>
-            <button class="btn btn-danger btn-sm btn-del">Eliminar</button>
           </td>`;
-        const btnEdit = tr.querySelector('.btn-edit'), btnSave = tr.querySelector('.btn-save'),
-              btnCancel = tr.querySelector('.btn-cancel'), btnDel = tr.querySelector('.btn-del');
+
+        const btnEdit = tr.querySelector('.btn-edit');
+        const btnSave = tr.querySelector('.btn-save');
+        const btnCancel = tr.querySelector('.btn-cancel');
 
         const toEdit = () => {
           const c = tr.querySelector('.v-cant').textContent;
-          const p = tr.querySelector('.v-precio').textContent;
           tr.children[3].innerHTML = `<input type="number" class="form-control form-control-sm e-cant" value="${c}">`;
-          tr.children[4].innerHTML = `<input type="number" step="0.01" class="form-control form-control-sm e-precio" value="${p}">`;
           btnEdit.classList.add('d-none'); btnSave.classList.remove('d-none'); btnCancel.classList.remove('d-none');
         };
-        const toView = (c,p) => {
+        const toView = (c) => {
           tr.children[3].innerHTML = `<span class="v-cant">${c}</span>`;
-          tr.children[4].innerHTML = `<span class="v-precio">${p}</span>`;
           btnEdit.classList.remove('d-none'); btnSave.classList.add('d-none'); btnCancel.classList.add('d-none');
         };
 
         btnEdit.onclick = () => toEdit();
-        btnCancel.onclick = () => toView(tr.querySelector('.e-cant')?.value ?? tr.querySelector('.v-cant').textContent,
-                                         tr.querySelector('.e-precio')?.value ?? tr.querySelector('.v-precio').textContent);
+        btnCancel.onclick = () => toView(tr.querySelector('.e-cant')?.value ?? tr.querySelector('.v-cant').textContent);
         btnSave.onclick = async () => {
-          const cant = Number(tr.querySelector('.e-cant').value), prec = Number(tr.querySelector('.e-precio').value);
-          const rr = await fetch('/api/detalle-factura/linea/' + tr.dataset.id, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ cantidad:cant, precio:prec }) });
+          const cant = Number(tr.querySelector('.e-cant').value);
+          const precio = Number(tr.dataset.precio ?? 0); // usamos el precio actual (no mostrado)
+          const rr = await fetch('/api/detalle-factura/linea/' + tr.dataset.id, {
+            method:'PUT', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ cantidad:cant, precio:precio })
+          });
           if(!rr.ok){ msgErr(qs('df-result'),'Error al guardar'); return; }
-          msgOK(qs('df-result'),'Línea actualizada'); await loadDetalle();
-        };
-        btnDel.onclick = async () => {
-          const rr = await fetch('/api/detalle-factura/linea/' + tr.dataset.id, { method:'DELETE' });
-          if(!rr.ok){ msgErr(qs('df-result'),'Error al eliminar'); return; }
-          msgOK(qs('df-result'),'Línea eliminada'); await loadDetalle();
+          msgOK(qs('df-result'),'Línea actualizada');
+          await loadDetalle();
         };
 
         tbody.appendChild(tr);
       });
     }
-    qs('df-cargar')?.addEventListener('click', async (e)=>{ e.preventDefault(); clear(qs('df-result')); await loadDetalle(); });
-
-    qs('df-add-form')?.addEventListener('submit', async e => {
-      e.preventDefault(); clear(qs('df-result'));
-      const facturaId = parseInt(qs('df-factura-id').value);
-      const productoId = parseInt(qs('df-add-prod').value);
-      const cantidad   = parseInt(qs('df-add-cant').value);
-      const precio     = parseFloat(qs('df-add-precio').value);
-      if(!facturaId || !productoId || !cantidad || precio<0){ msgErr(qs('df-result'),'Datos incompletos'); return; }
-      const p = new URLSearchParams({ productoId, cantidad, precio });
-      const r = await fetch('/api/detalle-factura/' + facturaId, { method:'POST', body:p });
-      if(!r.ok){ msgErr(qs('df-result'),'Error al agregar'); return; }
-      msgOK(qs('df-result'),'Línea agregada'); e.target.reset(); await loadDetalle();
-    });
+    qs('df-cargar')?.addEventListener('click', async (e)=>{ e.preventDefault(); await loadDetalle(); });
 
     // ===== Cierres
     qs('cie-create-form').onsubmit = async e => {
@@ -1055,7 +1052,6 @@
       const fmtTime = t => {
         if (t == null) return '';
         if (typeof t === 'string') {
-          // toma HH:mm si viene ISO u hora completa
           const m = t.match(/(\d{2}:\d{2})/);
           return m ? m[1] : t;
         }

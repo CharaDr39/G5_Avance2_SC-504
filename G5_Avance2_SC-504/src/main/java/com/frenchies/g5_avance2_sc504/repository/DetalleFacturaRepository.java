@@ -38,30 +38,31 @@ public class DetalleFacturaRepository {
                 "PRODUCTO_ID", getLong(rs, "PRODUCTO_ID", "ID_PRODUCTO"),
                 "NOMBRE",      getString(rs, "NOMBRE", "PRODUCTO"),
                 "CANTIDAD",    getLong(rs, "CANTIDAD"),
+                // tolera PRECIO o PRECIO_UNITARIO
                 "PRECIO",      getDouble(rs, "PRECIO", "PRECIO_UNITARIO"),
                 "SUBTOTAL",    getDouble(rs, "SUBTOTAL")
             ));
 
-        // INSERTAR LÍNEA
+        // INSERTAR LÍNEA  (usa P_PRECIO_UNITARIO como en el SP)
         insCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
             .withProcedureName("DET_INS_SP")
             .declareParameters(
-                new SqlParameter("P_FACTURA_ID",  Types.NUMERIC),
-                new SqlParameter("P_PRODUCTO_ID", Types.NUMERIC),
-                new SqlParameter("P_CANTIDAD",    Types.NUMERIC),
-                new SqlParameter("P_PRECIO",      Types.NUMERIC),
-                new SqlOutParameter("P_OUT_ID",   Types.NUMERIC)
+                new SqlParameter("P_FACTURA_ID",      Types.NUMERIC),
+                new SqlParameter("P_PRODUCTO_ID",     Types.NUMERIC),
+                new SqlParameter("P_CANTIDAD",        Types.NUMERIC),
+                new SqlParameter("P_PRECIO_UNITARIO", Types.NUMERIC),
+                new SqlOutParameter("P_OUT_ID",       Types.NUMERIC)
             );
 
-        // ACTUALIZAR LÍNEA
+        // ACTUALIZAR LÍNEA  (también P_PRECIO_UNITARIO)
         updCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
             .withProcedureName("DET_UPD_SP")
             .declareParameters(
-                new SqlParameter("P_DETALLE_ID",  Types.NUMERIC),
-                new SqlParameter("P_CANTIDAD",    Types.NUMERIC),
-                new SqlParameter("P_PRECIO",      Types.NUMERIC)
+                new SqlParameter("P_DETALLE_ID",      Types.NUMERIC),
+                new SqlParameter("P_CANTIDAD",        Types.NUMERIC),
+                new SqlParameter("P_PRECIO_UNITARIO", Types.NUMERIC)
             );
 
         // ELIMINAR LÍNEA
@@ -80,21 +81,21 @@ public class DetalleFacturaRepository {
         ).get("P_CURSOR");
     }
 
-    public long insertLinea(long facturaId, long productoId, long cantidad, double precio) {
+    public long insertLinea(long facturaId, long productoId, long cantidad, double precioUnitario) {
         var out = insCall.execute(Map.of(
-            "P_FACTURA_ID",  facturaId,
-            "P_PRODUCTO_ID", productoId,
-            "P_CANTIDAD",    cantidad,
-            "P_PRECIO",      precio
+            "P_FACTURA_ID",      facturaId,
+            "P_PRODUCTO_ID",     productoId,
+            "P_CANTIDAD",        cantidad,
+            "P_PRECIO_UNITARIO", precioUnitario
         ));
         return ((Number) out.get("P_OUT_ID")).longValue();
     }
 
-    public void updateLinea(long detalleId, long cantidad, double precio) {
+    public void updateLinea(long detalleId, long cantidad, double precioUnitario) {
         updCall.execute(Map.of(
-            "P_DETALLE_ID", detalleId,
-            "P_CANTIDAD",   cantidad,
-            "P_PRECIO",     precio
+            "P_DETALLE_ID",      detalleId,
+            "P_CANTIDAD",        cantidad,
+            "P_PRECIO_UNITARIO", precioUnitario
         ));
     }
 

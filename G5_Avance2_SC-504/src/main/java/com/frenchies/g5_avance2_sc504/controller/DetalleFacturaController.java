@@ -1,55 +1,54 @@
-// src/main/java/com/frenchies/g5_avance2_sc504/controller/DetalleFacturaController.java
 package com.frenchies.g5_avance2_sc504.controller;
 
-import java.util.List;
-import java.util.Map;
+import com.frenchies.g5_avance2_sc504.repository.DetalleFacturaRepository;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.frenchies.g5_avance2_sc504.service.DetalleFacturaService;
+import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/facturas/{facturaId}/detalle")
+@RequestMapping("/api/detalle-factura")
 public class DetalleFacturaController {
 
-    private final DetalleFacturaService svc;
+    private final DetalleFacturaRepository repo;
 
-    public DetalleFacturaController(DetalleFacturaService svc) {
-        this.svc = svc;
+    public DetalleFacturaController(DetalleFacturaRepository repo) {
+        this.repo = repo;
     }
 
-    @GetMapping
+    // Listar líneas de una factura
+    @GetMapping("/{facturaId}")
     public ResponseEntity<List<Map<String,Object>>> list(@PathVariable long facturaId) {
-        return ResponseEntity.ok(svc.list(facturaId));
+        return ResponseEntity.ok(repo.listByFactura(facturaId));
     }
 
-    @PostMapping
+    // Agregar línea (form-urlencoded: productoId, cantidad, precio)
+    @PostMapping(value = "/{facturaId}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<Map<String,Object>> add(
             @PathVariable long facturaId,
-            @RequestBody Map<String,Object> b) {
-        long productoId = ((Number)b.get("productoId")).longValue();
-        long cantidad   = ((Number)b.get("cantidad")).longValue();
-        double precio   = ((Number)b.get("precio")).doubleValue();
-        long id = svc.add(facturaId, productoId, cantidad, precio);
-        return ResponseEntity.ok(Map.of("detalle_id", id));
+            @RequestParam("productoId") long productoId,
+            @RequestParam("cantidad") long cantidad,
+            @RequestParam("precio") double precioUnitario
+    ) {
+        long detId = repo.insertLinea(facturaId, productoId, cantidad, precioUnitario);
+        return ResponseEntity.ok(Map.of("detalle_id", detId));
     }
 
-    @PutMapping("/{detalleId}")
-    public ResponseEntity<Void> update(
-            @PathVariable long facturaId,
-            @PathVariable long detalleId,
-            @RequestBody Map<String,Object> b) {
-        long cantidad = ((Number)b.get("cantidad")).longValue();
-        double precio = ((Number)b.get("precio")).doubleValue();
-        svc.update(detalleId, cantidad, precio);
+    // Actualizar línea (JSON: {cantidad, precio})
+    @PutMapping("/linea/{id}")
+    public ResponseEntity<Void> update(@PathVariable long id, @RequestBody Map<String,Object> body) {
+        long cantidad = ((Number) body.get("cantidad")).longValue();
+        double precio = ((Number) body.get("precio")).doubleValue();
+        repo.updateLinea(id, cantidad, precio);
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/{detalleId}")
-    public ResponseEntity<Void> delete(
-            @PathVariable long facturaId,
-            @PathVariable long detalleId) {
-        svc.delete(detalleId);
+    // Eliminar línea
+    @DeleteMapping("/linea/{id}")
+    public ResponseEntity<Void> delete(@PathVariable long id) {
+        repo.deleteLinea(id);
         return ResponseEntity.noContent().build();
     }
 }
