@@ -39,4 +39,9 @@ public class AsistenciaService {
     public List<Map<String, Object>> hoy() {
         return repo.hoy();
     }
+
+    // NUEVO
+    public List<Map<String,Object>> listAll() {
+        return repo.listAll();
+    }
 }

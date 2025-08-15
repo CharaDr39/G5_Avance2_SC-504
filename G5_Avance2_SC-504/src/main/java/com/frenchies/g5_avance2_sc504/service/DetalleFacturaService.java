@@ -1,6 +1,4 @@
-
 package com.frenchies.g5_avance2_sc504.service;
-// src/main/java/com/frenchies/g5_avance2_sc504/service/DetalleFacturaService.java
 
 import java.util.List;
 import java.util.Map;
@@ -20,15 +18,15 @@ public class DetalleFacturaService {
         return repo.listByFactura(facturaId);
     }
 
-    public long add(long facturaId, long productoId, long cantidad, double precio) {
+    public long add(long facturaId, long productoId, int cantidad, Double precio) {
         return repo.insertLinea(facturaId, productoId, cantidad, precio);
     }
 
-    public void update(long detalleId, long cantidad, double precio) {
-        repo.updateLinea(detalleId, cantidad, precio);
+    public void update(long detalleId, int cantidad, double precio) {
+        repo.updateDetalle(detalleId, cantidad, precio);
     }
 
     public void delete(long detalleId) {
-        repo.deleteLinea(detalleId);
+        repo.deleteDetalle(detalleId);
     }
 }

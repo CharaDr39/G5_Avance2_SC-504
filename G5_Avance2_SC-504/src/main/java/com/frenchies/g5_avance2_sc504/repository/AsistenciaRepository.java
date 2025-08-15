@@ -19,7 +19,7 @@ import java.util.Map;
 public class AsistenciaRepository {
 
     private final JdbcTemplate jdbc;
-    private SimpleJdbcCall asisIns, asisUpd, asisDel, rptHoy;
+    private SimpleJdbcCall asisIns, asisUpd, asisDel, rptHoy, asisLst; // <- NUEVO asisLst
 
     public AsistenciaRepository(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
@@ -58,6 +58,13 @@ public class AsistenciaRepository {
             .withProcedureName("RPT_ASISTENCIA_HOY_SP")
             .declareParameters(new SqlOutParameter("P_CURSOR", Types.REF_CURSOR))
             .returningResultSet("P_CURSOR", new ColumnMapRowMapper());
+
+        // ===== Listado general (todas) =====
+        asisLst = new SimpleJdbcCall(jdbc)
+            .withCatalogName("PKG_FRENCHIES")
+            .withProcedureName("ASIS_LST_SP") // SP de listado general
+            .declareParameters(new SqlOutParameter("P_CURSOR", Types.REF_CURSOR))
+            .returningResultSet("P_CURSOR", new ColumnMapRowMapper());
     }
 
     private static Timestamp ts(LocalDate d, LocalTime t) {
@@ -77,7 +84,6 @@ public class AsistenciaRepository {
     }
 
     public void actualizar(long asistenciaId, LocalDate fecha, LocalTime hSalida, LocalTime hAlmuerzo) {
-        // si viene fecha, la usamos solo para construir las horas; si no, no importa (Oracle ignora la parte de fecha en TIME)
         Timestamp tsSalida = (hSalida == null ? null : Timestamp.valueOf((fecha != null ? fecha : LocalDate.now()).atTime(hSalida)));
         Timestamp tsAlm   = (hAlmuerzo == null ? null : Timestamp.valueOf((fecha != null ? fecha : LocalDate.now()).atTime(hAlmuerzo)));
         asisUpd.execute(Map.of(
@@ -94,5 +100,11 @@ public class AsistenciaRepository {
     @SuppressWarnings("unchecked")
     public List<Map<String, Object>> hoy() {
         return (List<Map<String, Object>>) rptHoy.execute(Map.of()).get("P_CURSOR");
+    }
+
+    // ===== NUEVO: listar todas =====
+    @SuppressWarnings("unchecked")
+    public List<Map<String,Object>> listAll() {
+        return (List<Map<String,Object>>) asisLst.execute(Map.of()).get("P_CURSOR");
     }
 }

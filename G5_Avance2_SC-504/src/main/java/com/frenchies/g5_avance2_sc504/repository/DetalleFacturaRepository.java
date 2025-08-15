@@ -1,15 +1,15 @@
 package com.frenchies.g5_avance2_sc504.repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
 import java.util.Map;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
 
@@ -17,110 +17,118 @@ import org.springframework.stereotype.Repository;
 public class DetalleFacturaRepository {
 
     private final JdbcTemplate jdbc;
-    private SimpleJdbcCall listCall, insCall, updCall, delCall;
 
-    public DetalleFacturaRepository(JdbcTemplate jdbc) { this.jdbc = jdbc; }
+    private SimpleJdbcCall detInsCall;
+    private SimpleJdbcCall detUpdCall;
+    private SimpleJdbcCall detDelCall;
+    private SimpleJdbcCall detListCall;
+    private SimpleJdbcCall getPrecioFn;
+
+    public DetalleFacturaRepository(JdbcTemplate jdbc) {
+        this.jdbc = jdbc;
+    }
 
     @PostConstruct
     public void init() {
-        // LISTAR
-        listCall = new SimpleJdbcCall(jdbc)
+        detInsCall = new SimpleJdbcCall(jdbc)
+            .withCatalogName("PKG_FRENCHIES")
+            .withProcedureName("DET_INS_SP")
+            .declareParameters(
+                new SqlParameter("P_FACTURA_ID", Types.NUMERIC),
+                new SqlParameter("P_PRODUCTO_ID", Types.NUMERIC),
+                new SqlParameter("P_CANTIDAD", Types.NUMERIC),
+                new SqlParameter("P_PRECIO_UNITARIO", Types.NUMERIC),
+                // el body puede llamarlo P_OUT_ID o P_ID_DETALLE: soporta ambos
+                new SqlOutParameter("P_ID_DETALLE", Types.NUMERIC),
+                new SqlOutParameter("P_OUT_ID", Types.NUMERIC)
+            );
+
+        detUpdCall = new SimpleJdbcCall(jdbc)
+            .withCatalogName("PKG_FRENCHIES")
+            .withProcedureName("DET_UPD_SP")
+            .declareParameters(
+                new SqlParameter("P_ID", Types.NUMERIC),
+                new SqlParameter("P_CANTIDAD", Types.NUMERIC),
+                new SqlParameter("P_PRECIO_UNITARIO", Types.NUMERIC)
+            );
+
+        detDelCall = new SimpleJdbcCall(jdbc)
+            .withCatalogName("PKG_FRENCHIES")
+            .withProcedureName("DET_DEL_SP")
+            .declareParameters(new SqlParameter("P_ID", Types.NUMERIC));
+
+        RowMapper<Map<String,Object>> rm = (rs, rn) -> Map.of(
+            "ID_DETALLE",      rs.getLong("ID_DETALLE"),
+            "FACTURA_ID",      rs.getLong("FACTURA_ID"),
+            "PRODUCTO_ID",     rs.getLong("PRODUCTO_ID"),
+            "CANTIDAD",        rs.getInt("CANTIDAD"),
+            "PRECIO_UNITARIO", rs.getDouble("PRECIO_UNITARIO")
+        );
+
+        detListCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
             .withProcedureName("LST_DETALLE_FACTURA_SP")
             .declareParameters(
                 new SqlParameter("P_FACTURA_ID", Types.NUMERIC),
                 new SqlOutParameter("P_CURSOR", Types.REF_CURSOR)
             )
-            .returningResultSet("P_CURSOR", (rs, rn) -> Map.of(
-                "DETALLE_ID",  getLong(rs, "DETALLE_ID", "ID_DETALLE"),
-                "FACTURA_ID",  getLong(rs, "FACTURA_ID", "ID_FACTURA"),
-                "PRODUCTO_ID", getLong(rs, "PRODUCTO_ID", "ID_PRODUCTO"),
-                "NOMBRE",      getString(rs, "NOMBRE", "PRODUCTO"),
-                "CANTIDAD",    getLong(rs, "CANTIDAD"),
-                "PRECIO_UNITARIO", getDouble(rs, "PRECIO_UNITARIO", "PRECIO"),
-                "SUBTOTAL",    getDouble(rs, "SUBTOTAL")
-            ));
+            .returningResultSet("P_CURSOR", rm);
 
-        // INSERTAR LÍNEA
-        insCall = new SimpleJdbcCall(jdbc)
+        getPrecioFn = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
-            .withProcedureName("DET_INS_SP")
-            .declareParameters(
-                new SqlParameter("P_FACTURA_ID",  Types.NUMERIC),
-                new SqlParameter("P_PRODUCTO_ID", Types.NUMERIC),
-                new SqlParameter("P_CANTIDAD",    Types.NUMERIC),
-                new SqlParameter("P_PRECIO",      Types.NUMERIC),
-                new SqlOutParameter("P_OUT_ID",   Types.NUMERIC)
-            );
+            .withFunctionName("OBTENER_PRECIO_VENTA_FN")
+            .declareParameters(new SqlParameter("P_PRODUCTO_ID", Types.NUMERIC));
+    }
 
-        // ACTUALIZAR LÍNEA  -> el SP usa P_ID (no P_DETALLE_ID)
-        updCall = new SimpleJdbcCall(jdbc)
-            .withCatalogName("PKG_FRENCHIES")
-            .withProcedureName("DET_UPD_SP")
-            .declareParameters(
-                new SqlParameter("P_ID",               Types.NUMERIC),
-                new SqlParameter("P_CANTIDAD",         Types.NUMERIC),
-                new SqlParameter("P_PRECIO_UNITARIO",  Types.NUMERIC)
-            );
+    /* ===== canónico ===== */
+    public long insertDetalle(long facturaId, long productoId, int cantidad, Double precioUnitario) {
+        double precio = (precioUnitario != null) ? precioUnitario : obtenerPrecioVenta(productoId);
 
-        // ELIMINAR LÍNEA (si tu SP usa P_ID cámbialo aquí también)
-        delCall = new SimpleJdbcCall(jdbc)
-            .withCatalogName("PKG_FRENCHIES")
-            .withProcedureName("DET_DEL_SP")
-            .declareParameters(
-                new SqlParameter("P_DETALLE_ID", Types.NUMERIC)
-            );
+        MapSqlParameterSource params = new MapSqlParameterSource()
+            .addValue("P_FACTURA_ID", facturaId)
+            .addValue("P_PRODUCTO_ID", productoId)
+            .addValue("P_CANTIDAD", cantidad)
+            .addValue("P_PRECIO_UNITARIO", precio);
+
+        Map<String, Object> out = detInsCall.execute(params);
+        Object val = out.get("P_ID_DETALLE");
+        if (val == null) val = out.get("P_OUT_ID");
+        if (val == null) throw new IllegalStateException("DET_INS_SP no devolvió el id del detalle.");
+        return ((Number) val).longValue();
+    }
+
+    public void updateDetalle(long idDetalle, int cantidad, double precioUnitario) {
+        detUpdCall.execute(new MapSqlParameterSource()
+            .addValue("P_ID", idDetalle)
+            .addValue("P_CANTIDAD", cantidad)
+            .addValue("P_PRECIO_UNITARIO", precioUnitario));
+    }
+
+    public void deleteDetalle(long idDetalle) {
+        detDelCall.execute(new MapSqlParameterSource().addValue("P_ID", idDetalle));
     }
 
     @SuppressWarnings("unchecked")
     public List<Map<String,Object>> listByFactura(long facturaId) {
-        return (List<Map<String,Object>>) listCall.execute(
-            Map.of("P_FACTURA_ID", facturaId)
-        ).get("P_CURSOR");
+        return (List<Map<String,Object>>) detListCall
+            .execute(new MapSqlParameterSource().addValue("P_FACTURA_ID", facturaId))
+            .get("P_CURSOR");
     }
 
-    public long insertLinea(long facturaId, long productoId, long cantidad, double precio) {
-        var out = insCall.execute(Map.of(
-            "P_FACTURA_ID",  facturaId,
-            "P_PRODUCTO_ID", productoId,
-            "P_CANTIDAD",    cantidad,
-            "P_PRECIO",      precio
-        ));
-        return ((Number) out.get("P_OUT_ID")).longValue();
+    private double obtenerPrecioVenta(long productoId) {
+        Number n = getPrecioFn.executeFunction(Number.class,
+            new MapSqlParameterSource().addValue("P_PRODUCTO_ID", productoId));
+        return (n != null) ? n.doubleValue() : 0.0;
     }
 
-    public void updateLinea(long detalleId, long cantidad, double precioUnitario) {
-        updCall.execute(Map.of(
-            "P_ID",               detalleId,     // <- clave correcta
-            "P_CANTIDAD",         cantidad,
-            "P_PRECIO_UNITARIO",  precioUnitario
-        ));
+    /* ===== alias para mantener compatibilidad con tu servicio ===== */
+    public long insertLinea(long facturaId, long productoId, int cantidad, Double precioUnitario) {
+        return insertDetalle(facturaId, productoId, cantidad, precioUnitario);
     }
-
-    public void deleteLinea(long detalleId) {
-        delCall.execute(Map.of("P_DETALLE_ID", detalleId));
+    public long insertLinea(Long facturaId, Long productoId, Integer cantidad, Double precioUnitario) {
+        return insertDetalle(facturaId, productoId, cantidad, precioUnitario);
     }
-
-    // ===== helpers tolerantes a alias =====
-    private static long getLong(ResultSet rs, String... names) throws SQLException {
-        for (String n : names) {
-            try { long v = rs.getLong(n); if (!rs.wasNull()) return v; return 0L; }
-            catch (SQLException ignore) {}
-        }
-        return 0L;
-    }
-    private static double getDouble(ResultSet rs, String... names) throws SQLException {
-        for (String n : names) {
-            try { double v = rs.getDouble(n); if (!rs.wasNull()) return v; return 0.0; }
-            catch (SQLException ignore) {}
-        }
-        return 0.0;
-    }
-    private static String getString(ResultSet rs, String... names) throws SQLException {
-        for (String n : names) {
-            try { String v = rs.getString(n); if (v != null) return v; }
-            catch (SQLException ignore) {}
-        }
-        return "";
+    public long insertLinea(long facturaId, long productoId, int cantidad, double precioUnitario) {
+        return insertDetalle(facturaId, productoId, cantidad, precioUnitario);
     }
 }

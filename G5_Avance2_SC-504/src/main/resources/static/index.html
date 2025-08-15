@@ -147,7 +147,7 @@
             <li><a class="nav-link disabled" data-page="asis-crear">Registrar Asistencia</a></li>
             <li><a class="nav-link disabled" data-page="asis-actualizar">Actualizar Asistencia</a></li>
             <li><a class="nav-link disabled" data-page="asis-eliminar">Eliminar Asistencia</a></li>
-            <li><a class="nav-link disabled" data-page="asis-hoy">Asistencia de Hoy</a></li>
+            <li><a class="nav-link disabled" data-page="asis-hoy">Asistencia (todas)</a></li>
           </ul>
         </div>
       </div>
@@ -319,12 +319,10 @@
         </div>
         <div class="table-responsive mt-3">
           <table class="table table-sm align-middle"><thead>
-            <!-- Quitamos Precio (₡); mantenemos Subtotal -->
             <tr><th>ID Detalle</th><th>Producto ID</th><th>Nombre</th><th>Cantidad</th><th>Subtotal</th><th></th></tr>
           </thead><tbody id="df-body"></tbody></table>
         </div>
         <div class="divider"></div>
-        <!-- Oculto: ya no se permite agregar líneas desde aquí -->
         <h6 class="d-none">Agregar línea</h6>
         <form id="df-add-form" class="row g-2 d-none">
           <div class="col-2"><input type="number" id="df-add-prod" class="form-control" placeholder="Ej: 101" /></div>
@@ -590,10 +588,10 @@
       </div>
     </div>
 
-    <!-- Reporte de Hoy -->
+    <!-- Reporte (ahora: todas) -->
     <div id="asis-hoy-page" class="page d-none">
       <div class="card p-4">
-        <h5>Asistencia de Hoy</h5>
+        <h5>Asistencia</h5>
         <button id="asis-load-hoy" class="btn btn-secondary mb-3">Cargar</button>
         <div class="table-responsive">
           <table class="table table-sm align-middle">
@@ -757,7 +755,7 @@
       r.status === 204 ? msgOK(div, 'Eliminado') : msgErr(div, 'Error');
     });
 
-    // ===== Detalle de Factura (solo Cantidad; sin Precio en UI)
+    // ===== Detalle de Factura
     async function loadDetalle(){
       const facturaId = parseInt(qs('df-factura-id').value);
       const tbody = qs('df-body'); clear(tbody); clear(qs('df-result'));
@@ -777,7 +775,7 @@
 
         const tr = document.createElement('tr');
         tr.dataset.id = idDet;
-        tr.dataset.precio = precioUnit; // lo conservamos para el PUT
+        tr.dataset.precio = precioUnit;
         tr.innerHTML = `
           <td>${idDet ?? ''}</td>
           <td>${prodId}</td>
@@ -808,7 +806,7 @@
         btnCancel.onclick = () => toView(tr.querySelector('.e-cant')?.value ?? tr.querySelector('.v-cant').textContent);
         btnSave.onclick = async () => {
           const cant = Number(tr.querySelector('.e-cant').value);
-          const precio = Number(tr.dataset.precio ?? 0); // usamos el precio actual (no mostrado)
+          const precio = Number(tr.dataset.precio ?? 0);
           const rr = await fetch('/api/detalle-factura/linea/' + tr.dataset.id, {
             method:'PUT', headers:{'Content-Type':'application/json'},
             body: JSON.stringify({ cantidad:cant, precio:precio })
@@ -1019,25 +1017,24 @@
       r.status===204 ? msgOK(div,'Eliminado') : msgErr(div,'Error');
     });
 
-    // hoy (robusto + mensajes)
+    // ===== Asistencia (todas): carga general ordenada por fecha (más recientes primero)
     qs('asis-load-hoy')?.addEventListener('click', async () => {
-      const tbody = qs('asis-hoy-body'); tbody.innerHTML='';
+      const tbody = qs('asis-hoy-body'); clear(tbody);
       const div = qs('asis-hoy-result'); clear(div);
 
-      // intenta /asistencia/hoy y si no existe, prueba /asistencias/hoy
+      // intenta /asistencia y si no existe, prueba /asistencias
       const tryEndpoints = async () => {
-        let resp = await fetch('/asistencia/hoy');
-        if (resp.status === 404) resp = await fetch('/asistencias/hoy');
+        let resp = await fetch('/asistencia');
+        if (resp.status === 404) resp = await fetch('/asistencias');
         return resp;
       };
 
       const r = await tryEndpoints();
-
-      if (r.status === 204) { msgInfo(div,'No hay registros de asistencia para hoy.'); return; }
+      if (r.status === 204) { msgInfo(div,'No hay registros de asistencia.'); return; }
       if (!r.ok) { msgErr(div, 'No se pudo cargar ('+r.status+').'); return; }
 
       let json = null;
-      try { json = await r.json(); } catch(_) { msgInfo(div,'Sin datos para hoy.'); return; }
+      try { json = await r.json(); } catch(_) { msgInfo(div,'Sin datos.'); return; }
 
       // normaliza posibles formas de respuesta
       let rows = [];
@@ -1047,8 +1044,31 @@
       else if (json?.result && Array.isArray(json.result)) rows = json.result;
       else if (json?.data && Array.isArray(json.data)) rows = json.data;
 
-      if (!Array.isArray(rows) || rows.length === 0) { msgInfo(div,'No hay registros de asistencia para hoy.'); return; }
+      if (!Array.isArray(rows) || rows.length === 0) { msgInfo(div,'No hay registros de asistencia.'); return; }
 
+      const toTs = (f) => {
+        if (!f) return 0;
+        if (typeof f === 'number') {
+          const n = Number(f);
+          return (n > 1e12) ? n : (n > 1e9 ? n*1000 : n); // ms / s / fallback
+        }
+        if (typeof f === 'string') {
+          let m = f.match(/(\d{4})-(\d{2})-(\d{2})/); // YYYY-MM-DD
+          if (m) return new Date(Number(m[1]), Number(m[2])-1, Number(m[3])).getTime();
+          m = f.match(/(\d{2})\/(\d{2})\/(\d{4})/);    // DD/MM/YYYY
+          if (m) return new Date(Number(m[3]), Number(m[2])-1, Number(m[1])).getTime();
+          const t = Date.parse(f);
+          if (!isNaN(t)) return t;
+        }
+        return 0;
+      };
+
+      rows.sort((a,b) => toTs((b.FECHA ?? b.FECHA_ASISTENCIA ?? b.fecha)) - toTs((a.FECHA ?? a.FECHA_ASISTENCIA ?? a.fecha)));
+
+      const fmtDate = (f) => {
+        const ts = toTs(f);
+        return ts ? new Date(ts).toLocaleDateString() : (typeof f === 'string' ? f : '');
+      };
       const fmtTime = t => {
         if (t == null) return '';
         if (typeof t === 'string') {
@@ -1061,8 +1081,7 @@
       rows.forEach(o=>{
         const id  = o.ASISTENCIA_ID ?? o.ID ?? o.id ?? '';
         const usr = o.USUARIO ?? o.USUARIO_ID ?? o.usuario ?? '';
-        let fecha = o.FECHA ?? o.FECHA_ASISTENCIA ?? o.fecha ?? '';
-        if (typeof fecha === 'number') fecha = new Date(fecha).toLocaleDateString();
+        const fecha = fmtDate(o.FECHA ?? o.FECHA_ASISTENCIA ?? o.fecha);
 
         const he = fmtTime(o.HORA_ENTRADA ?? o.ENTRADA ?? o.horaEntrada);
         const hs = fmtTime(o.HORA_SALIDA  ?? o.SALIDA  ?? o.horaSalida);

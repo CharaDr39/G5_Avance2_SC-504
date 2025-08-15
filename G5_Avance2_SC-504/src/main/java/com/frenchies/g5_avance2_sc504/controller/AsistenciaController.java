@@ -8,13 +8,23 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/asistencia")
+// Soporta /asistencia (contrato) y /asistencias (fallback del front)
+@RequestMapping({"/asistencia","/asistencias"})
 public class AsistenciaController {
 
     private final AsistenciaService svc;
 
     public AsistenciaController(AsistenciaService svc) {
         this.svc = svc;
+    }
+
+    // ====== LISTAR TODAS ======
+    // GET /asistencia  y  GET /asistencias
+    @GetMapping
+    public ResponseEntity<?> listarTodas() {
+        List<Map<String,Object>> rows = svc.listAll();
+        if (rows == null || rows.isEmpty()) return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(rows);
     }
 
     @PostMapping
@@ -43,6 +53,7 @@ public class AsistenciaController {
         return ResponseEntity.noContent().build();
     }
 
+    // GET /asistencia/hoy  y  /asistencias/hoy (se mantiene)
     @GetMapping("/hoy")
     public ResponseEntity<List<Map<String,Object>>> hoy() {
         return ResponseEntity.ok(svc.hoy());
