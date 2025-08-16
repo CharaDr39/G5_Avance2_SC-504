@@ -13,6 +13,7 @@ import java.sql.Types;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +22,7 @@ public class AsistenciaRepository {
 
     private final JdbcTemplate jdbc;
 
-    // INSERT y listados (ya OK)
+    // INSERT y listados
     private SimpleJdbcCall asiIns;
     private SimpleJdbcCall lstHoy;
     private SimpleJdbcCall lstAll;
@@ -33,6 +34,9 @@ public class AsistenciaRepository {
     // DELETE: dos variantes (ASI_* y ASIS_*)
     private SimpleJdbcCall asiDel_Pid;            // ASI_DEL_SP(P_ID)
     private SimpleJdbcCall asisDel_Pasistencia;   // ASIS_DEL_SP(P_ASISTENCIA_ID)
+
+    private static final DateTimeFormatter DF_DATE = DateTimeFormatter.ofPattern("d/M/yyyy");
+    private static final DateTimeFormatter DF_TIME = DateTimeFormatter.ofPattern("HH:mm");
 
     public AsistenciaRepository(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
@@ -51,7 +55,7 @@ public class AsistenciaRepository {
                 new SqlParameter("P_HORA_ENTRADA", Types.TIMESTAMP),
                 new SqlParameter("P_HORA_SALIDA", Types.TIMESTAMP),
                 new SqlParameter("P_HORA_ALMUERZO", Types.TIMESTAMP),
-                new SqlOutParameter("P_ID", Types.NUMERIC) // OUT real
+                new SqlOutParameter("P_ID", Types.NUMERIC)
             );
 
         // ===== LIST HOY: LST_ASISTENCIA_HOY_SP =====
@@ -60,7 +64,13 @@ public class AsistenciaRepository {
             .withProcedureName("LST_ASISTENCIA_HOY_SP")
             .withoutProcedureColumnMetaDataAccess()
             .declareParameters(new SqlOutParameter("P_CURSOR", Types.REF_CURSOR))
-            .returningResultSet("P_CURSOR", new ColumnMapRowMapper());
+            .returningResultSet("P_CURSOR", (rs, rn) -> {
+                // Partimos del mapeo automático…
+                Map<String,Object> row = new ColumnMapRowMapper().mapRow(rs, rn);
+                // …y normalizamos campos de fecha/hora si existen
+                normalizeRowDateTime(row);
+                return row;
+            });
 
         // ===== LIST ALL: LST_ASISTENCIA_SP =====
         lstAll = new SimpleJdbcCall(jdbc)
@@ -68,7 +78,11 @@ public class AsistenciaRepository {
             .withProcedureName("LST_ASISTENCIA_SP")
             .withoutProcedureColumnMetaDataAccess()
             .declareParameters(new SqlOutParameter("P_CURSOR", Types.REF_CURSOR))
-            .returningResultSet("P_CURSOR", new ColumnMapRowMapper());
+            .returningResultSet("P_CURSOR", (rs, rn) -> {
+                Map<String,Object> row = new ColumnMapRowMapper().mapRow(rs, rn);
+                normalizeRowDateTime(row);
+                return row;
+            });
 
         // ===== UPDATE (variantes) =====
         // Firma real: P_ID, P_FECHA, P_HORA_SALIDA, P_HORA_ALMUERZO
@@ -112,6 +126,28 @@ public class AsistenciaRepository {
         return Timestamp.valueOf(d.atTime(t));
     }
 
+    private static void normalizeRowDateTime(Map<String,Object> row) {
+        // FECHA (si viene como Timestamp o Date)
+        Object f = row.get("FECHA");
+        if (f instanceof java.util.Date dt) {
+            LocalDate d = new Timestamp(dt.getTime()).toLocalDateTime().toLocalDate();
+            row.put("FECHA", DF_DATE.format(d));
+        }
+        // HORAS
+        row.computeIfPresent("HORA_ENTRADA", (k,v) -> toHHmm(v));
+        row.computeIfPresent("HORA_SALIDA",  (k,v) -> toHHmm(v));
+        row.computeIfPresent("HORA_ALMUERZO",(k,v) -> toHHmm(v));
+    }
+
+    private static String toHHmm(Object v) {
+        if (v == null) return null;
+        if (v instanceof java.util.Date dt) {
+            LocalTime t = new Timestamp(dt.getTime()).toLocalDateTime().toLocalTime();
+            return DF_TIME.format(t);
+        }
+        return String.valueOf(v);
+    }
+
     // ===== Crear =====
     public long crear(long usuarioId, LocalDate fecha, LocalTime hEntrada, LocalTime hSalida, LocalTime hAlmuerzo) {
         Map<String, Object> out = asiIns.execute(Map.of(
@@ -153,13 +189,10 @@ public class AsistenciaRepository {
 
     // ===== Eliminar =====
     public void eliminar(long asistenciaId) {
-        // 1) intento con ASI_DEL_SP(P_ID)
         try {
             asiDel_Pid.execute(Map.of("P_ID", asistenciaId));
             return;
         } catch (Exception ignore) { /* fallback */ }
-
-        // 2) fallback a ASIS_DEL_SP(P_ASISTENCIA_ID)
         asisDel_Pasistencia.execute(Map.of("P_ASISTENCIA_ID", asistenciaId));
     }
 
