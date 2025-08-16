@@ -22,6 +22,7 @@ public class CierreRepository {
     private SimpleJdbcCall insCierreCall;            // CIE_INS_SP (sin fecha)
     private SimpleJdbcCall insCierreWithFechaCall;   // CIE_INS_SP (con P_FECHA_CIERRE)
     private SimpleJdbcCall updCierreFechaCall;       // CIE_UPD_SP (P_ID, P_TIPO, P_FECHA_CIERRE)
+    private SimpleJdbcCall setTotalCall;             // CIE_TOTAL_SP (P_CIERRE_ID, P_TOTAL)
     private SimpleJdbcCall delCierreCall;            // CIE_DEL_SP
     private SimpleJdbcCall listCierreCall;           // LST_CIERRES_SP
     private SimpleJdbcCall totalFnCall;              // TOTAL_CIERRE_FN (FUNCTION)
@@ -33,7 +34,6 @@ public class CierreRepository {
     @PostConstruct
     public void init() {
         // === INSERT CIERRE ===
-        // Variante SIN fecha (aprovecha DEFAULT SYSDATE)
         insCierreCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
             .withProcedureName("CIE_INS_SP")
@@ -43,7 +43,6 @@ public class CierreRepository {
                 new SqlOutParameter("P_OUT_ID", Types.NUMERIC)
             );
 
-        // Variante CON fecha: declara P_FECHA_CIERRE explícitamente
         insCierreWithFechaCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
             .withProcedureName("CIE_INS_SP")
@@ -55,7 +54,6 @@ public class CierreRepository {
             );
 
         // === UPDATE CIERRE ===
-        // Firma real: CIE_UPD_SP(P_ID IN, P_TIPO IN, P_FECHA_CIERRE IN DATE)
         updCierreFechaCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
             .withProcedureName("CIE_UPD_SP")
@@ -64,6 +62,16 @@ public class CierreRepository {
                 new SqlParameter("P_ID", Types.NUMERIC),
                 new SqlParameter("P_TIPO", Types.VARCHAR),
                 new SqlParameter("P_FECHA_CIERRE", Types.TIMESTAMP)
+            );
+
+        // === SET TOTAL MANUAL ===
+        setTotalCall = new SimpleJdbcCall(jdbc)
+            .withCatalogName("PKG_FRENCHIES")
+            .withProcedureName("CIE_TOTAL_SP")
+            .withoutProcedureColumnMetaDataAccess()
+            .declareParameters(
+                new SqlParameter("P_CIERRE_ID", Types.NUMERIC),
+                new SqlParameter("P_TOTAL", Types.NUMERIC)
             );
 
         // === DELETE CIERRE ===
@@ -87,7 +95,6 @@ public class CierreRepository {
             ));
 
         // === TOTAL DE CIERRE (FUNCTION) ===
-        // TOTAL_CIERRE_FN(p_cierre_id IN NUMBER) RETURN NUMBER
         totalFnCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
             .withFunctionName("TOTAL_CIERRE_FN")
@@ -96,8 +103,6 @@ public class CierreRepository {
     }
 
     // ===== Cierres =====
-
-    /** Inserta usando SYSDATE (sin fecha explícita). */
     public long insert(String tipo) {
         var out = insCierreCall.execute(Map.of("P_TIPO", tipo));
         Object val = out.get("P_OUT_ID");
@@ -105,7 +110,6 @@ public class CierreRepository {
         return ((Number) val).longValue();
     }
 
-    /** Inserta declarando fecha explícita. */
     public long insert(String tipo, LocalDate fecha) {
         var out = insCierreWithFechaCall.execute(Map.of(
             "P_TIPO", tipo,
@@ -116,7 +120,6 @@ public class CierreRepository {
         return ((Number) val).longValue();
     }
 
-    /** Update con la firma real del SP: (P_ID, P_TIPO, P_FECHA_CIERRE). */
     public void update(long id, String tipo, LocalDate fecha) {
         var ts = (fecha == null)
             ? Timestamp.valueOf(LocalDate.now().atStartOfDay())
@@ -128,9 +131,17 @@ public class CierreRepository {
         ));
     }
 
-    /** Compatibilidad con llamadas antiguas (ignora total). */
+    // Compatibilidad antigua.
     public void update(long id, String tipo, Double ignoredTotalFacturado) {
         update(id, tipo, LocalDate.now());
+    }
+
+    // Setear total manual usando CIE_TOTAL_SP
+    public void setTotal(long idCierre, double total) {
+        setTotalCall.execute(Map.of(
+            "P_CIERRE_ID", idCierre,
+            "P_TOTAL", total
+        ));
     }
 
     public void delete(long id) {
@@ -142,7 +153,6 @@ public class CierreRepository {
         return (List<Map<String,Object>>) listCierreCall.execute(Map.of()).get("P_CURSOR");
     }
 
-    /** Total del cierre (function). */
     public double total(long idCierre) {
         Number n = totalFnCall.executeFunction(Number.class, Map.of("P_CIERRE_ID", idCierre));
         return n == null ? 0.0 : n.doubleValue();

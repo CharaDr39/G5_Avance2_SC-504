@@ -1,3 +1,4 @@
+// src/main/java/com/frenchies/g5_avance2_sc504/controller/CierreController.java
 package com.frenchies.g5_avance2_sc504.controller;
 
 import java.time.LocalDate;
@@ -32,9 +33,17 @@ public class CierreController {
     // ===== Cierres =====
     @PostMapping("/cierres")
     public ResponseEntity<Map<String,Object>> create(@RequestBody Map<String,Object> b) {
-        String tipo = String.valueOf(b.getOrDefault("tipo","DIARIO"));
+        String tipo  = String.valueOf(b.getOrDefault("tipo","DIARIO"));
         LocalDate fecha = parseFecha(b.get("fecha"));
-        long id = svc.create(tipo, fecha);
+
+        Long id = svc.create(tipo, fecha);
+
+        // total opcional (manual)
+        if (b.get("total") != null) {
+            double total = ((Number) b.get("total")).doubleValue();
+            svc.setTotal(id, total);
+            return ResponseEntity.ok(Map.of("cierre_id", id, "total", total));
+        }
         return ResponseEntity.ok(Map.of("cierre_id", id));
     }
 
@@ -45,9 +54,15 @@ public class CierreController {
 
     @PutMapping("/cierres/{id}")
     public ResponseEntity<Void> update(@PathVariable long id, @RequestBody Map<String,Object> b) {
-        String tipo = String.valueOf(b.getOrDefault("tipo","DIARIO"));
+        String tipo  = String.valueOf(b.getOrDefault("tipo","DIARIO"));
         LocalDate fecha = parseFecha(b.get("fecha"));
         svc.update(id, tipo, fecha);
+
+        // (opcional) si también mandan total en update, lo persistimos
+        if (b.get("total") != null) {
+            double total = ((Number) b.get("total")).doubleValue();
+            svc.setTotal(id, total);
+        }
         return ResponseEntity.noContent().build();
     }
 

@@ -28,6 +28,9 @@ public class CierreService {
     public List<Map<String,Object>> list() { return cierres.list(); }
     public double total(long id) { return cierres.total(id); }
 
+    // Setear total manual
+    public void setTotal(long id, double total) { cierres.setTotal(id, total); }
+
     // Movimientos
     public long addMov(long cierreId, String tipo, String desc, double monto) {
         return movs.insert(cierreId, tipo, desc, monto);
