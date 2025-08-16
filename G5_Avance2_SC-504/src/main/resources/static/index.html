@@ -335,75 +335,181 @@
     </div>
 
     <!-- ===== CIERRES ===== -->
-    <div id="create-cierre-page" class="page d-none"><div class="card p-4">
-      <h5>Crear Cierre</h5>
-      <form id="cie-create-form" class="row g-3">
-        <div class="col-md-3"><label>Tipo</label>
-          <select id="cie-tipo" class="form-control" required>
-            <option value="DIARIO">DIARIO</option><option value="SEMANAL">SEMANAL</option><option value="MENSUAL">MENSUAL</option>
-          </select>
-        </div>
-        <div class="col-md-3"><label>Fecha</label><input type="date" id="cie-fecha" class="form-control" required /></div>
-        <div class="col-md-3 d-flex align-items-end"><button class="btn btn-primary">Crear Cierre</button></div>
-      </form>
-      <div id="cie-create-result" class="mt-3"></div>
-    </div></div>
-
-    <div id="list-cierres-page" class="page d-none"><div class="card p-4">
-      <h5>Listado de Cierres</h5>
-      <button id="cie-load" class="btn btn-secondary mb-3">Cargar Cierres</button>
-      <div class="table-responsive">
-        <table class="table table-sm"><thead><tr><th>ID</th><th>Tipo</th><th>Fecha</th><th>Total (₡)</th></tr></thead>
-          <tbody id="cie-list-body"></tbody></table>
+    <div id="create-cierre-page" class="page d-none">
+      <div class="card p-4">
+        <h5>Crear Cierre</h5>
+        <form id="cie-create-form" class="row g-3">
+          <div class="col-md-3">
+            <label>Tipo</label>
+            <select id="cie-tipo" class="form-control" required>
+              <option value="DIARIO">DIARIO</option>
+              <option value="SEMANAL">SEMANAL</option>
+              <option value="MENSUAL">MENSUAL</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label>Fecha</label>
+            <input type="date" id="cie-fecha" class="form-control" required />
+          </div>
+          <!-- Campo para total (opcional por ahora) -->
+          <div class="col-md-3">
+            <label>Total del día (₡)</label>
+            <input type="number" step="0.01" id="cie-total" class="form-control" placeholder="Ej: 150000.00" />
+          </div>
+          <div class="col-md-3 d-flex align-items-end">
+            <button class="btn btn-primary">Crear Cierre</button>
+          </div>
+        </form>
+        <div id="cie-create-result" class="mt-3"></div>
       </div>
-    </div></div>
+    </div>
 
-    <div id="update-cierre-page" class="page d-none"><div class="card p-4">
-      <h5>Actualizar Cierre</h5>
-      <form id="cie-update-form" class="row g-3">
-        <div class="col-md-2"><label>ID</label><input type="number" id="cie-upd-id" class="form-control" placeholder="Ej: 1" required /></div>
-        <div class="col-md-3"><label>Tipo</label>
-          <select id="cie-upd-tipo" class="form-control" required>
-            <option value="DIARIO">DIARIO</option><option value="SEMANAL">SEMANAL</option><option value="MENSUAL">MENSUAL</option>
-          </select>
+    <div id="list-cierres-page" class="page d-none">
+      <div class="card p-4">
+        <h5>Listado de Cierres</h5>
+        <button id="cie-load" class="btn btn-secondary mb-3">Cargar Cierres</button>
+        <div class="table-responsive">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Tipo</th>
+                <th>Fecha</th>
+                <th>Total (₡)</th>
+              </tr>
+            </thead>
+            <tbody id="cie-list-body"></tbody>
+          </table>
         </div>
-        <div class="col-md-3"><label>Fecha</label><input type="date" id="cie-upd-fecha" class="form-control" required /></div>
-        <div class="col-md-3 d-flex align-items-end"><button class="btn btn-primary">Actualizar</button></div>
-      </form>
-      <div id="cie-update-result" class="mt-3"></div>
-    </div></div>
-
-    <div id="delete-cierre-page" class="page d-none"><div class="card p-4">
-      <h5>Eliminar Cierre</h5>
-      <form id="cie-delete-form" class="row g-3">
-        <div class="col-md-3"><label>ID</label><input type="number" id="cie-del-id" class="form-control" placeholder="Ej: 1" required /></div>
-        <div class="col-md-3 d-flex align-items-end"><button class="btn btn-primary">Eliminar</button></div>
-      </form>
-      <div id="cie-delete-result" class="mt-3"></div>
-    </div></div>
-
-    <div id="movimientos-cierre-page" class="page d-none"><div class="card p-4">
-      <h5>Movimientos de Caja</h5>
-      <div class="row g-2 align-items-end">
-        <div class="col-auto"><label>Cierre ID</label><input type="number" id="mov-cierre-id" class="form-control" placeholder="Ej: 1" /></div>
-        <div class="col-auto"><button id="mov-load" class="btn btn-secondary">Cargar</button></div>
-        <div class="col-auto"><span id="mov-total" class="badge bg-primary p-2">Total: ₡0.00</span></div>
       </div>
-      <div class="table-responsive mt-3">
-        <table class="table table-sm align-middle"><thead><tr><th>ID</th><th>Tipo</th><th>Descripción</th><th>Monto (₡)</th><th></th></tr></thead><tbody id="mov-body"></tbody></table>
+    </div>
+
+    <div id="update-cierre-page" class="page d-none">
+      <div class="card p-4">
+        <h5>Actualizar Cierre</h5>
+        <form id="cie-update-form" class="row g-3">
+          <div class="col-md-2">
+            <label>ID</label>
+            <input type="number" id="cie-upd-id" class="form-control" placeholder="Ej: 1" required />
+          </div>
+          <div class="col-md-3">
+            <label>Tipo</label>
+            <select id="cie-upd-tipo" class="form-control" required>
+              <option value="DIARIO">DIARIO</option>
+              <option value="SEMANAL">SEMANAL</option>
+              <option value="MENSUAL">MENSUAL</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label>Fecha</label>
+            <input type="date" id="cie-upd-fecha" class="form-control" required />
+          </div>
+          <div class="col-md-3 d-flex align-items-end">
+            <button class="btn btn-primary">Actualizar</button>
+          </div>
+        </form>
+        <div id="cie-update-result" class="mt-3"></div>
       </div>
-      <div class="divider"></div>
-      <h6>Agregar movimiento</h6>
-      <form id="mov-add-form" class="row g-2">
-        <div class="col-md-2">
-          <select id="mov-add-tipo" class="form-control"><option value="ENTRADA">ENTRADA</option><option value="SALIDA">SALIDA</option></select>
+    </div>
+
+    <div id="delete-cierre-page" class="page d-none">
+      <div class="card p-4">
+        <h5>Eliminar Cierre</h5>
+        <form id="cie-delete-form" class="row g-3">
+          <div class="col-md-3">
+            <label>ID</label>
+            <input type="number" id="cie-del-id" class="form-control" placeholder="Ej: 1" required />
+          </div>
+          <div class="col-md-3 d-flex align-items-end">
+            <button class="btn btn-primary">Eliminar</button>
+          </div>
+        </form>
+        <div id="cie-delete-result" class="mt-3"></div>
+      </div>
+    </div>
+
+    <div id="movimientos-cierre-page" class="page d-none">
+      <div class="card p-4">
+        <h5>Movimientos de Caja</h5>
+        <div class="row g-2 align-items-end">
+          <div class="col-auto">
+            <label>Cierre ID</label>
+            <input type="number" id="mov-cierre-id" class="form-control" placeholder="Ej: 1" />
+          </div>
+          <div class="col-auto">
+            <button id="mov-load" class="btn btn-secondary">Cargar</button>
+          </div>
+          <div class="col-auto">
+            <span id="mov-total" class="badge bg-primary p-2">Total: ₡0.00</span>
+          </div>
         </div>
-        <div class="col-md-5"><input id="mov-add-desc" class="form-control" placeholder="Ej: Compra insumos / Apertura caja" /></div>
-        <div class="col-md-2"><input type="number" step="0.01" id="mov-add-monto" class="form-control" placeholder="Ej: 15000.00" /></div>
-        <div class="col-md-2"><button class="btn btn-primary">Agregar</button></div>
-      </form>
-      <div id="mov-result" class="mt-2"></div>
-    </div></div>
+        <div class="table-responsive mt-3">
+          <table class="table table-sm align-middle">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Tipo</th>
+                <th>Descripción</th>
+                <th>Monto (₡)</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="mov-body"></tbody>
+          </table>
+        </div>
+        <div class="divider"></div>
+        <h6>Agregar movimiento</h6>
+        <form id="mov-add-form" class="row g-2">
+          <div class="col-md-2">
+            <select id="mov-add-tipo" class="form-control">
+              <option value="ENTRADA">ENTRADA</option>
+              <option value="SALIDA">SALIDA</option>
+            </select>
+          </div>
+          <div class="col-md-5">
+            <input id="mov-add-desc" class="form-control" placeholder="Ej: Compra insumos / Apertura caja" />
+          </div>
+          <div class="col-md-2">
+            <input type="number" step="0.01" id="mov-add-monto" class="form-control" placeholder="Ej: 15000.00" />
+          </div>
+          <div class="col-md-2">
+            <button class="btn btn-primary">Agregar</button>
+          </div>
+        </form>
+        <div id="mov-result" class="mt-2"></div>
+      </div>
+    </div>
+
+    <!-- ==== Script para listar cierres con TOTAL_FACTURADO ==== -->
+    <script>
+      // Helpers locales (no chocan si ya tienes otros con el mismo propósito)
+      const _fmtCRC = n =>
+        new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' })
+          .format(Number(n) || 0);
+
+      const _fmtDate = v => {
+        if (!v) return '';
+        const d = new Date(v);
+        return isNaN(d) ? String(v).substring(0, 10) : d.toLocaleDateString();
+      };
+
+      // Botón: Cargar Cierres (pinta el total)
+      document.getElementById('cie-load')?.addEventListener('click', async () => {
+        const res  = await fetch('/cierres');
+        const data = await res.json();
+        const tbody = document.getElementById('cie-list-body');
+
+        tbody.innerHTML = data.map(c => `
+          <tr>
+            <td>${c.ID_CIERRE ?? c.id_cierre ?? c.id}</td>
+            <td>${c.TIPO ?? c.tipo}</td>
+            <td>${_fmtDate(c.FECHA_CIERRE ?? c.fecha_cierre ?? c.fecha)}</td>
+            <td>${_fmtCRC(c.TOTAL_FACTURADO ?? c.total ?? c.TOTAL ?? 0)}</td>
+          </tr>
+        `).join('');
+      });
+    </script>
+
 
     <!-- ===== INVENTARIO ===== -->
     <div id="create-inv-page" class="page d-none">
