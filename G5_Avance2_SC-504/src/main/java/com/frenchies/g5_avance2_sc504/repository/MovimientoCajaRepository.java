@@ -1,7 +1,6 @@
 package com.frenchies.g5_avance2_sc504.repository;
 
 import java.sql.Types;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,76 +15,88 @@ import org.springframework.stereotype.Repository;
 public class MovimientoCajaRepository {
 
     private final JdbcTemplate jdbc;
-    private SimpleJdbcCall insCall, updCall, delCall, listCall;
 
-    public MovimientoCajaRepository(JdbcTemplate jdbc) { this.jdbc = jdbc; }
+    private SimpleJdbcCall insCall;
+    private SimpleJdbcCall updCall;
+    private SimpleJdbcCall delCall;
+    private SimpleJdbcCall listByCierreCall;
+
+    public MovimientoCajaRepository(JdbcTemplate jdbc) {
+        this.jdbc = jdbc;
+    }
 
     @PostConstruct
     public void init() {
-        // INSERT  (ojo: aquí es P_ID_CIERRE)
+        // MOV_INS_SP(p_id_cierre IN, p_tipo IN, p_descripcion IN, p_monto IN, p_out_id OUT)
         insCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
             .withProcedureName("MOV_INS_SP")
+            .withoutProcedureColumnMetaDataAccess()
             .declareParameters(
-                new SqlParameter("P_ID_CIERRE",  Types.NUMERIC),
-                new SqlParameter("P_TIPO",       Types.VARCHAR),   // 'ENTRADA'|'SALIDA'
-                new SqlParameter("P_DESCRIPCION",Types.VARCHAR),
-                new SqlParameter("P_MONTO",      Types.NUMERIC),
-                new SqlOutParameter("P_OUT_ID",  Types.NUMERIC)
+                new SqlParameter("P_ID_CIERRE", Types.NUMERIC),
+                new SqlParameter("P_TIPO", Types.VARCHAR),
+                new SqlParameter("P_DESCRIPCION", Types.VARCHAR),
+                new SqlParameter("P_MONTO", Types.NUMERIC),
+                new SqlOutParameter("P_OUT_ID", Types.NUMERIC)
             );
 
-        // UPDATE
+        // MOV_UPD_SP(p_id IN, p_tipo IN, p_descripcion IN, p_monto IN)
         updCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
             .withProcedureName("MOV_UPD_SP")
+            .withoutProcedureColumnMetaDataAccess()
             .declareParameters(
-                new SqlParameter("P_ID",         Types.NUMERIC),   // id del movimiento
-                new SqlParameter("P_TIPO",       Types.VARCHAR),
-                new SqlParameter("P_DESCRIPCION",Types.VARCHAR),
-                new SqlParameter("P_MONTO",      Types.NUMERIC)
+                new SqlParameter("P_ID", Types.NUMERIC),
+                new SqlParameter("P_TIPO", Types.VARCHAR),
+                new SqlParameter("P_DESCRIPCION", Types.VARCHAR),
+                new SqlParameter("P_MONTO", Types.NUMERIC)
             );
 
-        // DELETE
+        // MOV_DEL_SP(p_id IN)
         delCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
             .withProcedureName("MOV_DEL_SP")
-            .declareParameters(new SqlParameter("P_ID", Types.NUMERIC));
+            .withoutProcedureColumnMetaDataAccess()
+            .declareParameters(
+                new SqlParameter("P_ID", Types.NUMERIC)
+            );
 
-        // LIST POR CIERRE (este sí usa P_CIERRE_ID)
-        listCall = new SimpleJdbcCall(jdbc)
+        // MOV_LST_SP(p_cierre_id IN, p_cursor OUT)
+        listByCierreCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
-            .withProcedureName("LST_MOVIMIENTOS_CIERRE_SP")
+            .withProcedureName("MOV_LST_SP")
+            .withoutProcedureColumnMetaDataAccess()
             .declareParameters(
                 new SqlParameter("P_CIERRE_ID", Types.NUMERIC),
                 new SqlOutParameter("P_CURSOR", Types.REF_CURSOR)
             )
-            .returningResultSet("P_CURSOR", (rs, rn) -> {
-                Map<String,Object> m = new HashMap<>();
-                try { m.put("ID_MOVIMIENTO", rs.getLong("ID_MOVIMIENTO")); } catch (Exception ignore) {}
-                try { m.put("ID_CIERRE",     rs.getLong("ID_CIERRE")); }     catch (Exception ignore) {}
-                try { m.put("TIPO",          rs.getString("TIPO")); }        catch (Exception ignore) {}
-                try { m.put("DESCRIPCION",   rs.getString("DESCRIPCION")); } catch (Exception ignore) {}
-                try { m.put("MONTO",         rs.getBigDecimal("MONTO")); }   catch (Exception ignore) {}
-                return m;
-            });
+            .returningResultSet("P_CURSOR", (rs, rn) -> Map.of(
+                "ID_MOVIMIENTO", rs.getLong("ID_MOVIMIENTO"),
+                "ID_CIERRE",     rs.getLong("ID_CIERRE"),
+                "TIPO",          rs.getString("TIPO"),
+                "DESCRIPCION",   rs.getString("DESCRIPCION"),
+                "MONTO",         rs.getDouble("MONTO")
+            ));
     }
 
     public long insert(long cierreId, String tipo, String descripcion, double monto) {
         var out = insCall.execute(Map.of(
-            "P_ID_CIERRE",  cierreId,
-            "P_TIPO",       tipo,
-            "P_DESCRIPCION",(descripcion == null ? "" : descripcion),
-            "P_MONTO",      monto
+            "P_ID_CIERRE", cierreId,
+            "P_TIPO", tipo,
+            "P_DESCRIPCION", descripcion,
+            "P_MONTO", monto
         ));
-        return ((Number) out.get("P_OUT_ID")).longValue();
+        Object val = out.get("P_OUT_ID");
+        if (val == null) throw new IllegalStateException("MOV_INS_SP no devolvió P_OUT_ID");
+        return ((Number) val).longValue();
     }
 
     public void update(long movId, String tipo, String descripcion, double monto) {
         updCall.execute(Map.of(
-            "P_ID",          movId,
-            "P_TIPO",        tipo,
-            "P_DESCRIPCION", (descripcion == null ? "" : descripcion),
-            "P_MONTO",       monto
+            "P_ID", movId,
+            "P_TIPO", tipo,
+            "P_DESCRIPCION", descripcion,
+            "P_MONTO", monto
         ));
     }
 
@@ -95,8 +106,10 @@ public class MovimientoCajaRepository {
 
     @SuppressWarnings("unchecked")
     public List<Map<String,Object>> listByCierre(long cierreId) {
-        return (List<Map<String,Object>>) listCall
-            .execute(Map.of("P_CIERRE_ID", cierreId))
-            .get("P_CURSOR");
+        var out = listByCierreCall.execute(Map.of("P_CIERRE_ID", cierreId));
+        var key = out.keySet().stream()
+            .filter(k -> k.equalsIgnoreCase("P_CURSOR"))
+            .findFirst().orElse("P_CURSOR");
+        return (List<Map<String,Object>>) out.get(key);
     }
 }

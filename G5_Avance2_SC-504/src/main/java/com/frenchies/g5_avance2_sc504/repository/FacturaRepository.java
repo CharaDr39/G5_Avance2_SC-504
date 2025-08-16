@@ -10,7 +10,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -25,36 +24,34 @@ public class FacturaRepository {
 
     @PostConstruct
     public void init() {
-        // INSERT (FAC_INS_SP: P_USUARIO_ID IN, P_FACTURA_ID OUT)
+        // INSERT: FAC_INS_SP(P_USUARIO_ID IN, P_FACTURA_ID OUT)
         insCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
             .withProcedureName("FAC_INS_SP")
             .withoutProcedureColumnMetaDataAccess()
             .declareParameters(
-                new SqlParameter("P_USUARIO_ID",  Types.NUMERIC),
+                new SqlParameter("P_USUARIO_ID", Types.NUMERIC),
                 new SqlOutParameter("P_FACTURA_ID", Types.NUMERIC)
             );
 
-        // UPDATE
+        // UPDATE: FAC_UPD_SP(P_FACTURA_ID IN, P_MONTO_TOTAL IN)
         updCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
-            .withProcedureName("FACT_UPD_SP")
+            .withProcedureName("FAC_UPD_SP")
             .withoutProcedureColumnMetaDataAccess()
             .declareParameters(
-                new SqlParameter("P_FACTURA_ID",  Types.NUMERIC),
-                new SqlParameter("P_MONTO_TOTAL", Types.DECIMAL)
+                new SqlParameter("P_FACTURA_ID", Types.NUMERIC),
+                new SqlParameter("P_MONTO_TOTAL", Types.NUMERIC)
             );
 
-        // DELETE
+        // DELETE: FAC_DEL_SP(P_ID IN)  <-- OJO: se llama P_ID (no P_FACTURA_ID)
         delCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
-            .withProcedureName("FACT_DEL_SP")
+            .withProcedureName("FAC_DEL_SP")
             .withoutProcedureColumnMetaDataAccess()
-            .declareParameters(
-                new SqlParameter("P_FACTURA_ID", Types.NUMERIC)
-            );
+            .declareParameters(new SqlParameter("P_ID", Types.NUMERIC));
 
-        // LIST
+        // LIST: LST_FACTURAS_SP(P_CURSOR OUT)
         listCall = new SimpleJdbcCall(jdbc)
             .withCatalogName("PKG_FRENCHIES")
             .withProcedureName("LST_FACTURAS_SP")
@@ -64,34 +61,22 @@ public class FacturaRepository {
                 "FACTURA_ID",  rs.getLong("FACTURA_ID"),
                 "USUARIO_ID",  rs.getLong("USUARIO_ID"),
                 "MONTO_TOTAL", rs.getDouble("MONTO_TOTAL")
-                // Si en tu SELECT devuelves FECHA, puedes mapearla también
-                // "FECHA_EMISION", rs.getTimestamp("FECHA_EMISION")
             ));
     }
 
-    // OJO: el segundo parámetro no se usa (se mantiene la firma para no romper servicios)
-    public long insertFactura(long usuarioId, double ignorado) {
-        MapSqlParameterSource params = new MapSqlParameterSource()
-            .addValue("P_USUARIO_ID", usuarioId);
-
-        Map<String, Object> out = insCall.execute(params);
-
+    public long insertFactura(long usuarioId, double ignoredMonto) {
+        var out = insCall.execute(Map.of("P_USUARIO_ID", usuarioId));
         Object val = out.get("P_FACTURA_ID");
-        if (val == null)
-            throw new IllegalStateException("FAC_INS_SP no devolvió P_FACTURA_ID");
-
+        if (val == null) throw new IllegalStateException("FAC_INS_SP no devolvió P_FACTURA_ID");
         return ((Number) val).longValue();
     }
 
     public void updateFactura(long id, double monto) {
-        updCall.execute(Map.of(
-            "P_FACTURA_ID",  id,
-            "P_MONTO_TOTAL", monto
-        ));
+        updCall.execute(Map.of("P_FACTURA_ID", id, "P_MONTO_TOTAL", monto));
     }
 
     public void deleteFactura(long id) {
-        delCall.execute(Map.of("P_FACTURA_ID", id));
+        delCall.execute(Map.of("P_ID", id)); // nombre EXACTO
     }
 
     @SuppressWarnings("unchecked")
